@@ -50,7 +50,11 @@ GEM
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
     erubis (2.7.0)
+    ethon (0.6.1)
+      ffi (>= 1.3.0)
+      mime-types (~> 1.18)
     execjs (2.0.2)
+    ffi (1.9.0)
     hike (1.2.3)
     i18n (0.6.5)
     jbuilder (1.5.2)
@@ -124,6 +128,8 @@ GEM
       polyglot (>= 0.3.1)
     turbolinks (1.3.0)
       coffee-rails
+    typhoeus (0.6.5)
+      ethon (~> 0.6.1)
     tzinfo (0.3.38)
     uglifier (2.3.0)
       execjs (>= 0.3.0)
@@ -146,4 +152,5 @@ DEPENDENCIES
   sdoc
   slim-rails
   turbolinks
+  typhoeus
   uglifier (>= 1.3.0)

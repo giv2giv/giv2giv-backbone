@@ -11,6 +11,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 gem 'mysql2'
+gem 'typhoeus'
 
 group :development do
   gem 'debugger'
