@@ -1,5 +1,11 @@
-= stylesheet_link_tag "custom-plugins/wizard/wizard.css"
-= javascript_include_tag "custom-plugins/wizard/wizard.min.js", "custom-plugins/wizard/jquery.form.min.js", "demo/form_wizard.js"
+= stylesheet_link_tag "bootstrap/bootstrap.min.css", "jui/jquery-ui.css", "jui/jquery-ui.custom.css", "jui/timepicker/jquery-ui-timepicker.css", "plugins/uniform/uniform.default.css", "custom-plugins/wizard/wizard.css", "fonts/icomoon/style.css", "main-style.css"
+
+= javascript_include_tag "libs/jquery-1.8.3.min.js", "bootstrap/bootstrap.min.js", "libs/jquery.placeholder.min.js", "libs/jquery.mousewheel.min.js", "template.js", "setup.js", "customizer.js", "plugins/uniform/jquery.uniform.min.js", "jui/jquery-ui-1.9.2.min.js", "jui/jquery-ui.custom.min.js", "jui/timepicker/jquery-ui-timepicker.min.js", "jui/jquery.ui.touch-punch.min.js", "plugins/validate/jquery.validate.min.js", "custom-plugins/wizard/wizard.js", "custom-plugins/wizard/jquery.form.min.js", "demo/form_wizard.js"
+
+css:
+  .btn-toolbar-hidden{
+    display: none;
+  }
 
 #sidebar-separator
 section#main.clearfix
@@ -23,145 +29,46 @@ section#main.clearfix
         .widget-header
           span.title
             i.icol-wand
-            | Standard Wizard
-          .toolbar
-            .btn-group
-              span.btn data-content="<code>[data-forward-only=\"true\"]</code>" data-html="true" data-placement="left" data-trigger="hover" rel="popover" title="Standard Wizard"
-              = "Show Data Attributes"
-        .widget-content.form-container
-          form#wizard-demo-1.form-horizontal data-forward-only="true"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-book
-                | Account
-              .control-group
-                label.control-label
-                  | Username
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[username]" type="text"
-              .control-group
-                label.control-label
-                  | Email
-                  span.required *
-                .controls
-                  input.required.email.span12 name="wizard[email]" type="text"
-              .control-group
-                label.control-label
-                  | Password
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[password]" type="password"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-user
-                | Member
-              .control-group
-                label.control-label
-                  | Fullname
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[fullname]" type="text"
-              .control-group
-                label.control-label
-                  | Address
-                  span.required *
-                .controls
-                  textarea.required.span12 name="wizard[address]"
-              .control-group
-                label.control-label
-                  | Gender
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-pencil
-                | Membership
-              .control-group
-                label.control-label
-                  | Membership Period
-                  span.required *
-                .controls
-                  select.required name="wizard[period]"
-                    option 1 Month
-                    option 3 Months
-                    option 6 Months
-                    option 1 Year
-              .control-group
-                label.control-label
-                  | Package
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[package]" type="radio"
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Full
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Premium
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-ok
-                | Confirmation
-              .control-group
-                label.control-label
-                  | Payment Method
-                  span.required *
-                .controls
-                  select.required name="wizard[payment]"
-                    option PayPal
-                    option Visa
-                    option Mastercard
-                    option Wire Transfer
-              .control-group
-                .controls
-                  label.checkbox
-                    input.required name="wizard[tos]" type="checkbox"
-                      | I agree to the terms of service
-                      span.required *
-    .row-fluid
-      .span12.widget
-        .widget-header
-          span.title
-            i.icol-wand
             | Wizard with Validation
           .toolbar
             .btn-group
-              span.btn data-content="<code>[data-forward-only=\"false\"]</code>" data-html="true" data-placement="left" data-trigger="hover" rel="popover" title="Wizard With Validation"
-              = "Show Data Attributes"
+              span.btn data-content="" data-html="true" data-placement="left" data-trigger="hover" rel="popover" title="Wizard With Validation"
+            = "Show Data Attributes"
         .widget-content.form-container
-          form#wizard-demo-2.form-horizontal data-forward-only="false"
+          = form_tag create_endowment_path, id: "wizard-demo-2", class: "form-horizontal form-endowment", method: :post, remote: true do
             fieldset.wizard-step
               legend.wizard-label
                 i.icon-book
-                | Account
+                | Charity Group
               .control-group
                 label.control-label
-                  | Username
+                  | Endowment Name
                   span.required *
                 .controls
-                  input.required.span12 name="wizard[username]" type="text"
+                  input.required.span12 name="endowment[name]" type="text" id="name"
               .control-group
                 label.control-label
-                  | Email
+                  | Minimum Donation Amount
                   span.required *
                 .controls
-                  input.required.email.span12 name="wizard[email]" type="text"
+                  input.required.span12 name="endowment[minimum_donation_amount]" type="text" id="minimum_donation_amount"
               .control-group
                 label.control-label
-                  | Password
+                  | Visibility
                   span.required *
-                .controls
-                  input.required.span12 name="wizard[password]" type="password"
+                .controls id="endowment_visibility"
+                  label.radio
+                    input.required name="endowment[endowment_visibility]" type="radio" id= "public" Public
+                  label.radio
+                    input.required name="endowment[endowment_visibility]" type="radio" id= "private" Private
+              .form-actions.btn-toolbar
+                = submit_tag "Next", class: "btn hidden", id: "endowsment-submit"
+                = link_to "Save & Continue ►", "javascript:void(0)", class: "btn endowment-save-continue", style: "position: relative;display:block;margin:0 auto;width: 262px;"
+
             fieldset.wizard-step
               legend.wizard-label
                 i.icon-user
-                | Member
+                | Add Charity to Group
               .control-group
                 label.control-label
                   | Fullname
@@ -184,6 +91,10 @@ section#main.clearfix
                   label.radio
                     input.required name="wizard[gender]" type="radio"
                   label.error for="wizard[gender]" generated="true" style="display:none"
+              .form-actions.btn-toolbar
+                = submit_tag "Next", class: "btn hidden", id: "endowsment-submit"
+                = link_to "Save & Continue ►", "javascript:void(0)", class: "btn endowment-save-continue", style: "position: relative;display:block;margin:0 auto;width: 262px;"
+
             fieldset.wizard-step
               legend.wizard-label
                 i.icon-pencil
@@ -233,221 +144,31 @@ section#main.clearfix
                       | I agree to the terms of service
                       span.required *
                   label.error for="wizard[tos]" generated="true" style="display:none"
-    .row-fluid
-      .span12.widget
-        .widget-header
-          span.title
-            i.icol-wand
-            | Vertical Wizard
-          .toolbar
-            .btn-group
-              span.btn data-content="<code>[data-orientation=\"vertical\" data-forward-only=\"false\"]</code>" data-html="true" data-placement="left" data-trigger="hover" rel="popover" title="Vertical Wizard"
-              = "Show Data Attributes"
-        .widget-content.form-container
-          form#wizard-demo-3.form-horizontal data-forward-only="false" data-orientation="vertical"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-book
-                | Account
-              .control-group
-                label.control-label
-                  | Username
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[username]" type="text"
-              .control-group
-                label.control-label
-                  | Email
-                  span.required *
-                .controls
-                  input.required.email.span12 name="wizard[email]" type="text"
-              .control-group
-                label.control-label
-                  | Password
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[password]" type="password"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-user
-                | Member
-              .control-group
-                label.control-label
-                  | Fullname
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[fullname]" type="text"
-              .control-group
-                label.control-label
-                  | Address
-                  span.required *
-                .controls
-                  textarea.required.span12 name="wizard[address]"
-              .control-group
-                label.control-label
-                  | Gender
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.error for="wizard[gender]" generated="true" style="display:none"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-pencil
-                | Membership
-              .control-group
-                label.control-label
-                  | Membership Period
-                  span.required *
-                .controls
-                  select.required name="wizard[period]"
-                    option 1 Month
-                    option 3 Months
-                    option 6 Months
-                    option 1 Year
-              .control-group
-                label.control-label
-                  | Package
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[package]" type="radio"
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Full
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Premium
-                  label.error for="wizard[package]" generated="true" style="display:none"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-ok
-                | Confirmation
-              .control-group
-                label.control-label
-                  | Payment Method
-                  span.required *
-                .controls
-                  select.required name="wizard[payment]"
-                    option PayPal
-                    option Visa
-                    option Mastercard
-                    option Wire Transfer
-              .control-group
-                .controls
-                  label.checkbox
-                    input.required name="wizard[tos]" type="checkbox"
-                      | I agree to the terms of service
-                      span.required *
-                  label.error for="wizard[tos]" generated="true" style="display:none"
-    .row-fluid
-      .span12.widget
-        .widget-header
-          span.title
-            i.icol-wand
-            | AJAX Wizard
-          .toolbar
-            .btn-group
-              span.btn data-content="<code>[data-forward-only=\"false\"]</code>" data-html="true" data-placement="left" data-trigger="hover" rel="popover" title="Vertical Wizard"
-              = "Show Data Attributes"
-        .widget-content.form-container
-          form#wizard-demo-4.form-horizontal action="php/wizard.php" data-forward-only="false" method="post"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-book
-                | Account
-              .control-group
-                label.control-label
-                  | Username
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[username]" type="text"
-              .control-group
-                label.control-label
-                  | Email
-                  span.required *
-                .controls
-                  input.required.email.span12 name="wizard[email]" type="text"
-              .control-group
-                label.control-label
-                  | Password
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[password]" type="password"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-user
-                | Member
-              .control-group
-                label.control-label
-                  | Fullname
-                  span.required *
-                .controls
-                  input.required.span12 name="wizard[fullname]" type="text"
-              .control-group
-                label.control-label
-                  | Address
-                  span.required *
-                .controls
-                  textarea.required.span12 name="wizard[address]"
-              .control-group
-                label.control-label
-                  | Gender
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.error for="wizard[gender]" generated="true" style="display:none"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-pencil
-                | Membership
-              .control-group
-                label.control-label
-                  | Membership Period
-                  span.required *
-                .controls
-                  select.required name="wizard[period]"
-                    option 1 Month
-                    option 3 Months
-                    option 6 Months
-                    option 1 Year
-              .control-group
-                label.control-label
-                  | Package
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[package]" type="radio"
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Full
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Premium
-                  label.error for="wizard[package]" generated="true" style="display:none"
-            fieldset.wizard-step
-              legend.wizard-label
-                i.icon-ok
-                | Confirmation
-              .control-group
-                label.control-label
-                  | Payment Method
-                  span.required *
-                .controls
-                  select.required name="wizard[payment]"
-                    option PayPal
-                    option Visa
-                    option Mastercard
-                    option Wire Transfer
-              .control-group
-                .controls
-                  label.checkbox
-                    input.required name="wizard[tos]" type="checkbox"
-                      | I agree to the terms of service
-                      span.required *
-                  label.error for="wizard[tos]" generated="true" style="display:none"
+
+javascript:
+  $(document).ready(function() {
+    $('.endowment-save-continue').on('click', function(e) {
+      e.preventDefault();
+      if (!$(".form-endowment").valid()) return;
+      $("input.endowment-save-continue").val("LOADING..");
+      $(this).text("LOADING..");
+      var name = $('#name').val();
+      var minimum_donation_amount = $('#minimum_donation_amount').val();
+      //var endowment_visibility = $('#endowment_visibility').val();
+      var val1 = $("#public").is(":checked");
+      var endowment_visibility = (val1 == true ? "Public" : "Private")
+
+      var data = {
+        name: name,
+        minimum_donation_amount: minimum_donation_amount,
+        endowment_visibility: endowment_visibility
+      };
+      $.ajax({
+        type: 'POST',
+        url: '#{request.protocol}' + document.location.hostname + ":" + document.location.port + '/create_endowment',
+        data: data
+      }).done(function(id) {
+        $('.form-actions').find('button:contains(Next)').click()
+      });
+    });
+  });

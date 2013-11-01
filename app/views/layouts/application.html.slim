@@ -2,9 +2,6 @@ doctype html
 html
   head
     title Giv2givJquery
-    = stylesheet_link_tag "bootstrap/bootstrap.min.css", "jui/jquery-ui.css", "jui/jquery-ui.custom.css", "jui/timepicker/jquery-ui-timepicker.css", "plugins/uniform/uniform.default.css", "plugins/ibutton/jquery.ibutton.css", "custom-plugins/circular-stat/circular-stat.css", "plugins/fullcalendar/fullcalendar.css", "plugins/fullcalendar/fullcalendar.print.css", "fonts/icomoon/style.css", "main-style.css"
-
-    = javascript_include_tag "libs/jquery-1.8.3.min.js", "bootstrap/bootstrap.min.js", "libs/jquery.placeholder.min.js", "libs/jquery.mousewheel.min.js", "template.js", "setup.js", "customizer.js", "plugins/uniform/jquery.uniform.min.js", "jui/jquery-ui-1.9.2.min.js", "jui/jquery-ui.custom.min.js", "jui/timepicker/jquery-ui-timepicker.min.js", "jui/jquery.ui.touch-punch.min.js", "plugins/flot/jquery.flot.min.js", "plugins/flot/plugins/jquery.flot.tooltip.min.js", "plugins/flot/plugins/jquery.flot.pie.min.js", "plugins/flot/plugins/jquery.flot.resize.min.js", "custom-plugins/circular-stat/circular-stat.min.js", "plugins/sparkline/jquery.sparkline.min.js", "plugins/ibutton/jquery.ibutton.min.js", "plugins/fullcalendar/fullcalendar.min.js", "plugins/datatables/jquery.dataTables.min.js", "demo/dashboard.js"
     = csrf_meta_tags
 
   body data-fixed-sidebar="false" data-show-sidebar-toggle-button="true"
@@ -111,7 +108,8 @@ html
                   #user-info.clearfix
                     span.info
                       | Welcome
-                      span.name Shana-chan
+                      span.name
+                      = "#{session[:user_signed_in]["donor"]["name"]}"
                     .avatar
                       a.dropdown-toggle data-toggle="dropdown" href="#"
                         img alt="Avatar" src="assets/pp.jpg"
@@ -130,7 +128,7 @@ html
                             i.icol-key
                             | Logout
                   #logout-ribbon
-                    a href="index.html"
+                    = link_to sign_out_path, method: :post do
                       i.icon-off
         #content-wrap
           #content
