@@ -104,32 +104,33 @@ html
                                   span.time About an hour ago
                       li
                         a href="mail.html"
-                #header-functions.pull-right
-                  #user-info.clearfix
-                    span.info
-                      | Welcome
-                      span.name
-                      = "#{session[:user_signed_in]["donor"]["name"]}"
-                    .avatar
-                      a.dropdown-toggle data-toggle="dropdown" href="#"
-                        img alt="Avatar" src="assets/pp.jpg"
-                      ul.dropdown-menu.pull-right
-                        li
-                          a href="profile.html"
-                            i.icol-user
-                            | My Profile
-                        li
-                          a href="#"
-                            i.icol-layout
-                            | My Invoices
-                        li.divider
-                        li
-                          a href="index.html"
-                            i.icol-key
-                            | Logout
-                  #logout-ribbon
-                    = link_to sign_out_path, method: :post do
-                      i.icon-off
+                - if session[:user_signed_in]
+                  #header-functions.pull-right
+                    #user-info.clearfix
+                      span.info
+                        | Welcome
+                        span.name
+                        = "#{session[:user_signed_in][:email]}"
+                      .avatar
+                        a.dropdown-toggle data-toggle="dropdown" href="#"
+                          img alt="Avatar" src="assets/pp.jpg"
+                        ul.dropdown-menu.pull-right
+                          li
+                            a href="profile.html"
+                              i.icol-user
+                              | My Profile
+                          li
+                            a href="#"
+                              i.icol-layout
+                              | My Invoices
+                          li.divider
+                          li
+                            a href="index.html"
+                              i.icol-key
+                              | Logout
+                    #logout-ribbon
+                      = link_to sign_out_path, method: :post do
+                        i.icon-off
         #content-wrap
           #content
             #content-outer
@@ -142,11 +143,11 @@ html
                           i.icon-home
                           span.nav-title General
                         ul.inner-nav
-                          li.active
+                          li class="#{'active' if session[:button].eql?('dashboard')}"
                             = link_to root_path do
                               i.icol-dashboard
                               | Dashboard
-                          li
+                          li class="#{'active' if session[:button].eql?('new_endowment')}"
                             = link_to new_endowment_path do
                               i.icol-wand
                               | New Endowment

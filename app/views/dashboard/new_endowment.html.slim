@@ -58,12 +58,12 @@ section#main.clearfix
                   span.required *
                 .controls id="endowment_visibility"
                   label.radio
-                    input.required name="endowment[endowment_visibility]" type="radio" id= "public" Public
+                    input.required name="endowment[endowment_visibility]" type="radio" id= "public" public
                   label.radio
-                    input.required name="endowment[endowment_visibility]" type="radio" id= "private" Private
+                    input.required name="endowment[endowment_visibility]" type="radio" id= "private" private
               .form-actions.btn-toolbar
                 = submit_tag "Next", class: "btn hidden", id: "endowsment-submit"
-                = link_to "Save & Continue ►", "javascript:void(0)", class: "btn endowment-save-continue", style: "position: relative;display:block;margin:0 auto;width: 262px;"
+                = link_to "Next ►", "javascript:void(0)", class: "btn endowment-save-continue", style: "position: relative;display:block;margin:0 auto;width: 262px;"
 
             fieldset.wizard-step
               legend.wizard-label
@@ -156,14 +156,18 @@ javascript:
       var minimum_donation_amount = $('#minimum_donation_amount').val();
       //var endowment_visibility = $('#endowment_visibility').val();
       var val1 = $("#public").is(":checked");
-      var endowment_visibility = (val1 == true ? "Public" : "Private")
+      var endowment_visibility = (val1 == true ? "public" : "private")
 
       var data = {
         name: name,
         minimum_donation_amount: minimum_donation_amount,
         endowment_visibility: endowment_visibility
       };
+      var token = "#{session[:token]}";
       $.ajax({
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("Authorization", token);
+        },
         type: 'POST',
         url: '#{request.protocol}' + document.location.hostname + ":" + document.location.port + '/create_endowment',
         data: data
