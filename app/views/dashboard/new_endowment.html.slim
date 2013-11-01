@@ -71,79 +71,21 @@ section#main.clearfix
                 | Add Charity to Group
               .control-group
                 label.control-label
-                  | Fullname
+                  | Charity Id
                   span.required *
                 .controls
-                  input.required.span12 name="wizard[fullname]" type="text"
-              .control-group
-                label.control-label
-                  | Address
-                  span.required *
-                .controls
-                  textarea.required.span12 name="wizard[address]"
-              .control-group
-                label.control-label
-                  | Gender
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.radio
-                    input.required name="wizard[gender]" type="radio"
-                  label.error for="wizard[gender]" generated="true" style="display:none"
+                  input.required.span12 name="[charity_id]" type="text" id="charity_id"
               .form-actions.btn-toolbar
                 = submit_tag "Next", class: "btn hidden", id: "endowsment-submit"
-                = link_to "Save & Continue ►", "javascript:void(0)", class: "btn endowment-save-continue", style: "position: relative;display:block;margin:0 auto;width: 262px;"
+                = link_to "Create Endowment", "javascript:void(0)", class: "btn add-charity", style: "position: relative;display:block;margin:0 auto;width: 262px;"
 
             fieldset.wizard-step
               legend.wizard-label
-                i.icon-pencil
-                | Membership
-              .control-group
-                label.control-label
-                  | Membership Period
-                  span.required *
-                .controls
-                  select.required name="wizard[period]"
-                    option 1 Month
-                    option 3 Months
-                    option 6 Months
-                    option 1 Year
-              .control-group
-                label.control-label
-                  | Package
-                  span.required *
-                .controls
-                  label.radio
-                    input.required name="wizard[package]" type="radio"
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Full
-                  label.radio
-                    input name="wizard[package]" type="radio"
-                    | Premium
-                  label.error for="wizard[package]" generated="true" style="display:none"
-            fieldset.wizard-step
-              legend.wizard-label
                 i.icon-ok
-                | Confirmation
+                | Subscribe/ Donate Page
               .control-group
                 label.control-label
-                  | Payment Method
-                  span.required *
-                .controls
-                  select.required name="wizard[payment]"
-                    option PayPal
-                    option Visa
-                    option Mastercard
-                    option Wire Transfer
-              .control-group
-                .controls
-                  label.checkbox
-                    input.required name="wizard[tos]" type="checkbox"
-                      | I agree to the terms of service
-                      span.required *
-                  label.error for="wizard[tos]" generated="true" style="display:none"
+                  = "Endowment created!"
 
 javascript:
   $(document).ready(function() {
@@ -152,18 +94,29 @@ javascript:
       if (!$(".form-endowment").valid()) return;
       $("input.endowment-save-continue").val("LOADING..");
       $(this).text("LOADING..");
+
+      $('.form-actions').find('button:contains(Next)').click();
+    });
+
+    $('.add-charity').on('click', function(e) {
+      e.preventDefault();
+      if (!$(".form-endowment").valid()) return;
+      $("input.add-charity").val("LOADING..");
+      $(this).text("LOADING..");
+      var token = "#{session[:token]}";
       var name = $('#name').val();
       var minimum_donation_amount = $('#minimum_donation_amount').val();
-      //var endowment_visibility = $('#endowment_visibility').val();
       var val1 = $("#public").is(":checked");
-      var endowment_visibility = (val1 == true ? "public" : "private")
+      var endowment_visibility = (val1 == true ? "public" : "private");
+      var charity_id = $('#charity_id').val();
 
       var data = {
         name: name,
         minimum_donation_amount: minimum_donation_amount,
-        endowment_visibility: endowment_visibility
+        endowment_visibility: endowment_visibility,
+        charity_id: charity_id
       };
-      var token = "#{session[:token]}";
+
       $.ajax({
         beforeSend: function(xhr) {
           xhr.setRequestHeader("Authorization", token);
