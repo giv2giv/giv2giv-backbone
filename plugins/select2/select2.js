@@ -700,7 +700,6 @@
                             node.addClass(selectable ? "select2-result-selectable" : "select2-result-unselectable");
                             if (compound) { node.addClass("select2-result-with-children"); }
                             node.addClass(self.opts.formatResultCssClass(result));
-
                             label=$("<div></div>");
                             label.addClass("select2-result-label");
 
@@ -1377,7 +1376,7 @@
             var container = $("<div></div>", {
                 "class": "select2-container"
             }).html([
-                "    <a href='#' onclick='return false;' class='select2-choice'>",
+                "    <a href='#' onclick='' class='select2-choice'>",
                 "   <span></span><abbr class='select2-search-choice-close' style='display:none;'></abbr>",
                 "   <div><b></b></div>" ,
                 "</a>",
@@ -2077,7 +2076,7 @@
                 formatted;
 
             formatted=this.opts.formatSelection(data, choice);
-            choice.find("div").replaceWith("<div>"+this.opts.escapeMarkup(formatted)+"</div>");
+            choice.find("div").replaceWith("<div value=" + $(data.element[0]).attr('id') + ">"+this.opts.escapeMarkup(formatted)+"</div>");
             choice.find(".select2-search-choice-close")
                 .bind("mousedown", killEvent)
                 .bind("click dblclick", this.bind(function (e) {
@@ -2096,11 +2095,14 @@
                 this.dropdown.addClass("select2-drop-active");
             }));
 
+
             choice.data("select2-data", data);
             choice.insertBefore(this.searchContainer);
 
             val.push(id);
             this.setVal(val);
+
+          console.log($(data.element[0]).attr('id'))
         },
 
         // multi

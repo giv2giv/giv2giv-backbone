@@ -1,4 +1,4 @@
-window.indexUrl = "http://localhost/jquery-giv2giv/";
+window.indexUrl = "http://localhost/giv2giv-jquery/";
 window.serverUrl = "http://localhost:3000/";
 
 function signIn(){
@@ -74,3 +74,94 @@ function redirect(data){
   url = window.indexUrl + data;
   window.location.href = url;
 }
+
+function endowmentFirstStep(){
+  if (!$(".form-endowment").valid()) return;
+  $("input.endowment-first-step").val("LOADING..");
+
+  var charities = new Backbone.Collection;
+  charities.url = window.serverUrl + 'api/charity.json';
+
+  charities.fetch({
+    data: { "page":"1", "per_page":"400" },
+    success: function(response,xhr) {
+      // console.log(response);
+      window.charities = response;
+      addToList(JSON.stringify(window.charities));
+      // localStorage.setItem('charities', JSON.stringify(response));
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+
+  var aaa = JSON.parse(localStorage.getItem('charities'));
+
+  $('.form-actions').find('button:contains(Next)').click();
+}
+
+function addToList(source) {
+  $.each(JSON.parse(source), function(key, val) {
+    $('#input20').append("<option id=" + val.charity['id'] + ">" + val.charity['name'] + "</option>");
+  });
+}
+
+function createEndowment(){
+  if (!$(".form-endowment").valid()) return;
+  $("input.add-charity").val("LOADING..");
+  var charity_id = new Array;
+  $.each($('.select2-search-choice div'), function(key, val){
+    charity_id.push($(val).attr("value"));
+  })
+
+  var session = JSON.parse(localStorage.getItem('session'));
+  var token = session[0]['session'].token;
+  var name = $('#name').val();
+  var minimum_donation_amount = $('#minimum_donation_amount').val();
+  var val1 = $("#public").is(":checked");
+  var endowment_visibility = (val1 == true ? "public" : "private");
+  var description = $('#description').val();
+
+  var data = {
+    name: name,
+    minimum_donation_amount: minimum_donation_amount,
+    endowment_visibility: endowment_visibility,
+    description: description
+  };
+
+  var endowments = new Backbone.Collection;
+  endowments.url = window.serverUrl + 'api/endowment.json';
+
+  endowments.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    data: data,
+    type: "POST",
+    success: function(response,xhr) {
+      console.log(response);
+      localStorage.setItem('endowment_id', JSON.stringify(response));
+      $('.form-actions').find('button:contains(Next)').click();
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+
+  var endowment_id = JSON.parse(localStorage.getItem('endowment_id'));
+  var endowment_id = endowment_id[0]['endowment']['id'];
+  var charities = new Backbone.Collection;
+  charities.url = window.serverUrl + 'api/endowment/' + endowment_id + '/add_charity.json';
+
+  charities.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    data: { id: endowment_id, charity_id: charity_id.toString() },
+    type: "POST",
+    success: function(response,xhr) {
+      console.log(response);
+      $('.form-actions').find('button:contains(Next)').click();
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+

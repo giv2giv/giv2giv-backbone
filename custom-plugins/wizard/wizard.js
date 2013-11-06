@@ -16,44 +16,46 @@
  *
  */
 
-;(function($, window, document, undefined) {
-	"use strict";
+ ;(function($, window, document, undefined) {
+   "use strict";
 
 	// our plugin constructor
 	var Wizard = function( element, options ) {
 		if( arguments.length ) {
 			this._init( element, options );
 		}
-    };
-	
+  };
+
 	// the plugin prototype
 	Wizard.prototype = {
 		defaults: {
 			// Element Selectors
-			element: '.wizard-step', 
-			navLabelElement: '.wizard-label', 
+			element: '.wizard-step',
+			navLabelElement: '.wizard-label',
 
 			// Container Classes
-			navContainerClass: 'wizard-nav', 
-			buttonContainerClass: 'form-actions btn-toolbar', 
+			navContainerClass: 'wizard-nav',
+      //hidden next button wizard
+      // buttonContainerClass: 'form-actions btn-toolbar',
+      buttonContainerClass: 'form-actions btn-toolbar-hidden',
 
 			// Button Classes
-			defaultButtonClass: 'btn', 
-			responsiveNextButtonClass: 'responsive-next-btn', 
-			responsivePrevButtonClass: 'responsive-prev-btn', 
-			submitButtonClass: 'btn-primary pull-right', 
-			
+			defaultButtonClass: 'btn',
+			responsiveNextButtonClass: 'responsive-next-btn',
+			responsivePrevButtonClass: 'responsive-prev-btn',
+			submitButtonClass: 'btn-primary pull-right',
+
 			// Button Attributes
-			responsiveNextButtonLabel: '<i class="icon-caret-right"></i>', 
-			responsivePrevButtonLabel: '<i class="icon-caret-left"></i>', 
-			nextButtonLabel: 'Next', 
-			prevButtonLabel: 'Prev', 
-			submitButtonLabel: 'Submit', 
-			submitButtonName: 'wizard-submit', 
+			responsiveNextButtonLabel: '<i class="icon-caret-right"></i>',
+			responsivePrevButtonLabel: '<i class="icon-caret-left"></i>',
+			nextButtonLabel: 'Next',
+			prevButtonLabel: 'Prev',
+			submitButtonLabel: 'Submit',
+			submitButtonName: 'wizard-submit',
 
 			// Wizard Options
-			forwardOnly: false, 
-			orientation: 'horizontal', 
+			forwardOnly: false,
+			orientation: 'horizontal',
 
 			// Wizard Callbacks
 			onStepLeave: null, // function(wizard, step);
@@ -61,10 +63,10 @@
 			onBeforeSubmit: null, // function(wizard, form);
 
 			// Ajax Submit [Requires jQuery Form Plugin]
-			ajaxSubmit: false, 
+			ajaxSubmit: false,
 			ajaxOptions: {}
-		}, 
-		
+		},
+
 		_init: function( element, options ) {
 
 			// Basic Initialization
@@ -96,7 +98,7 @@
 
 			// Goto first step
 			this._navigate( this.steps.eq( 0 ).data( 'wzd-id' ), true );
-		}, 
+		},
 
 		_parseOptions: function() {
 			// Prepare Ajax Form
@@ -111,29 +113,29 @@
 				this.options.ajaxOptions = $.extend( {}, this.options.ajaxOptions, {
 					success: function( responseText, textStatus, xhr, form ) {
 						$.isFunction( formOptionsSuccess ) && formOptionsSuccess.call( this, responseText, textStatus, xhr, form );
-					}, 
+					},
 
 					complete: function( xhr, textStatus ) {
 						$.isFunction( formOptionsComplete ) && formOptionsComplete.call( this, xhr, textStatus );
-					}, 
+					},
 
 					error: function( xhr, textStatus ) {
 						$.isFunction( formOptionsError ) && formOptionsError.call( this, xhr, textStatus );
-					}, 
+					},
 
 					beforeSubmit: function( data, form, options ) {
 						if( $.isFunction( formOptionsBeforeSubmit ) ) {
 							return formOptionsBeforeSubmit.call( this, data, form, options );
 						}
 						return true;
-					}, 
+					},
 
 					beforeSend: function( xhr ) {
 						if( $.isFunction( formOptionsBeforeSend ) ) {
 							return formOptionsBeforeSend.call( this, xhr );
 						}
 						return true;
-					}, 
+					},
 
 					beforeSerialize: function( form, options ) {
 						if( $.isFunction( formOptionsBeforeSerialize ) ) {
@@ -143,19 +145,19 @@
 					}
 				});
 
-				this.element.ajaxForm( this.options.ajaxOptions );
-			}
+this.element.ajaxForm( this.options.ajaxOptions );
+}
 
 			// Set Orientation
 			if( !$.inArray( this.options.orientation, [ 'horizontal', 'vertical' ] ) )
 				this.options.orientation = 'horizontal';
 
 			this.element.addClass( 'wizard-form ' + 'wizard-form-' + this.options.orientation );
-		}, 
+		},
 
 		_callFunction: function( fn, args ) {
 			return !$.isFunction( fn )? true : fn.apply( this, args );
-		}, 
+		},
 
 		_generateRandomId: function() {
 			var guid = new Date().getTime().toString(32), i;
@@ -165,7 +167,7 @@
 			}
 
 			return 'wzd_' + guid;
-		}, 
+		},
 
 		_buildNavigation: function( steps ) {
 			var navContainer = $( '<div class="' + this.options.navContainerClass + ' ' + this.options.navContainerClass + '-' + this.options.orientation + '"></div>' );
@@ -177,13 +179,13 @@
 				var title = $( step ).find( this.options.navLabelElement ).hide();
 
 				item.find( 'span' )
-					.html( title && title.length? title.html() : 'Step ' + i )
-					.end().appendTo( nav )
-					.add( step ).attr( 'data-wzd-id', guid + '_' + i );
-			}, this));
+       .html( title && title.length? title.html() : 'Step ' + i )
+       .end().appendTo( nav )
+       .add( step ).attr( 'data-wzd-id', guid + '_' + i );
+     }, this));
 
 			return navContainer.append( nav ).insertBefore( this.element );
-		}, 
+		},
 
 		_buildButtons: function() {
 			var btnContainer = $( '<div class="' + this.options.buttonContainerClass + '"></div>' );
@@ -194,27 +196,27 @@
 
 			var nextButton = btn.clone().addClass( this.options.nextButtonClass ).text( this.options.nextButtonLabel );
 			var responsiveNextButton = btn.clone().addClass( this.options.responsiveNextButtonClass ).html( this.options.responsiveNextButtonLabel );
-			
+
 			var submitButton = btn.clone().addClass( this.options.submitButtonClass ).text( this.options.submitButtonLabel ).attr( 'name', this.options.submitButtonName );
 
 			this.nav && this.nav.length && this.nav.append( [ responsivePrevButton, responsiveNextButton ] );
 			btnContainer.append( [ prevButton, nextButton, submitButton ] ).appendTo( this.element );
 
 			return {
-				prev: prevButton, 
-				next: nextButton, 
-				responsivePrev: responsivePrevButton, 
-				responsiveNext: responsiveNextButton, 
+				prev: prevButton,
+				next: nextButton,
+				responsivePrev: responsivePrevButton,
+				responsiveNext: responsiveNextButton,
 				submit: submitButton
 			};
-		}, 
+		},
 
 		_refreshButtons: function() {
 			this.buttons.prev.add( this.buttons.responsivePrev ).attr( 'disabled', this._isFirstStep( this._activeWzdId ) || this.options.forwardOnly );
 			this.buttons.next.add( this.buttons.responsiveNext ).attr( 'disabled', this._isLastStep( this._activeWzdId ) );
 
 			this.buttons.submit.toggle( this._isLastStep( this._activeWzdId ) );
-		}, 
+		},
 
 		_bindEvents: function() {
 			var that = this;
@@ -238,38 +240,38 @@
 				that.submitForm();
 				e.preventDefault();
 			});
-		}, 
+		},
 
 		_canNavigate: function( wzdId ) {
 			var step = this._findStep( wzdId );
 			var currentStep = this._findStep( this._activeWzdId );
 
 			return !this._navigationLocked && !(this.options.forwardOnly && step && currentStep && step.index() <= currentStep.index());
-		}, 
+		},
 
 		_stepActivated: function( wzdId ) {
 			return this._validWzdId( wzdId ) && $.inArray( wzdId, this._activatedSteps ) > -1;
-		}, 
+		},
 
 		_activateStep: function( wzdId ) {
 			if ( this._validWzdId( wzdId ) ) {
 				var stepIndex = this._findNav( wzdId ).index();
-				for( var i = 0; i < stepIndex; ++i) { 
+				for( var i = 0; i < stepIndex; ++i) {
 					if( $.inArray( this.steps.eq( i ).data( 'wzd-id' ), this._activatedSteps ) === -1 ) {
 						return;
 					}
 				}
 				$.inArray( wzdId, this._activatedSteps ) === -1 && this._activatedSteps.push( wzdId );
 			}
-		}, 
+		},
 
 		_findStep: function( wzdId ) {
 			return this.steps.filter( '[data-wzd-id="' + wzdId + '"]' ).first();
-		}, 
+		},
 
 		_findNav: function( wzdId ) {
 			return this.nav.find('li').filter( '[data-wzd-id="' + wzdId + '"]' ).first();
-		}, 
+		},
 
 		_navigate: function( wzdId, ignore ) {
 			if( this._validWzdId( wzdId ) ) {
@@ -278,7 +280,7 @@
 					this._showStep( wzdId );
 				}
 			}
-		}, 
+		},
 
 		_showStep: function( wzdId ) {
 			if( this._validWzdId( wzdId ) ) {
@@ -307,49 +309,49 @@
 					});
 				}
 			}
-		}, 
+		},
 
 		_updateNav: function( wzdId ) {
 			if( this._validWzdId( wzdId ) ) {
 				var nav = this._findNav( wzdId );
 				nav.siblings('li')
-					.removeClass( 'current' )
-					.end()
-				.addClass( 'current' );
-			}
-		}, 
+       .removeClass( 'current' )
+       .end()
+       .addClass( 'current' );
+     }
+   },
 
-		_isLastStep: function( wzdId ) {
-			return this._validWzdId( wzdId ) && wzdId === this.steps.last().data('wzd-id');
-		}, 
+   _isLastStep: function( wzdId ) {
+     return this._validWzdId( wzdId ) && wzdId === this.steps.last().data('wzd-id');
+   },
 
-		_isFirstStep: function( wzdId ) {
-			return this._validWzdId( wzdId ) && wzdId === this.steps.first().data('wzd-id');
-		}, 
+   _isFirstStep: function( wzdId ) {
+     return this._validWzdId( wzdId ) && wzdId === this.steps.first().data('wzd-id');
+   },
 
-		_validWzdId: function( wzdId ) {
-			return typeof( wzdId ) === 'string' && wzdId.indexOf( 'wzd_' ) === 0;
-		}, 
+   _validWzdId: function( wzdId ) {
+     return typeof( wzdId ) === 'string' && wzdId.indexOf( 'wzd_' ) === 0;
+   },
 
-		next: function() {
-			if( !this._isLastStep( this._activeWzdId ) ) {
-				this._navigate( this._findStep( this._activeWzdId ).next().data( 'wzd-id' ) );
-			}
-		}, 
+   next: function() {
+     if( !this._isLastStep( this._activeWzdId ) ) {
+      this._navigate( this._findStep( this._activeWzdId ).next().data( 'wzd-id' ) );
+    }
+  },
 
-		prev: function() {
-			if( !this._isFirstStep( this._activeWzdId ) ) {
-				this._navigate( this._findStep( this._activeWzdId ).prev().data( 'wzd-id' ) );
-			}
-		}, 
+  prev: function() {
+   if( !this._isFirstStep( this._activeWzdId ) ) {
+    this._navigate( this._findStep( this._activeWzdId ).prev().data( 'wzd-id' ) );
+  }
+},
 
-		submitForm: function() {
-			if( this._callFunction( this.options.onBeforeSubmit, [ this, this.element ] ) ) {
-				this.element.submit();
-			}
-		}, 
+submitForm: function() {
+ if( this._callFunction( this.options.onBeforeSubmit, [ this, this.element ] ) ) {
+  this.element.submit();
+}
+},
 
-		reset: function() {
+reset: function() {
 			// Reset Variables
 			this._activatedSteps = [];
 			this._activeWzdId = -1;
@@ -364,12 +366,12 @@
 			this._navigate( this.steps.eq( 0 ).data( 'wzd-id' ), true );
 		}
 	}
-	
+
 	$.fn.wizard = function(options) {
 
 		var isMethodCall = typeof options === "string",
-			args = Array.prototype.slice.call( arguments, 1 ),
-			returnValue = this;
+   args = Array.prototype.slice.call( arguments, 1 ),
+   returnValue = this;
 
 		// prevent calls to internal methods
 		if ( isMethodCall && options.charAt( 0 ) === "_" ) {
@@ -379,15 +381,15 @@
 		if ( isMethodCall ) {
 			this.each(function() {
 				var instance = $.data( this, 'wizard' ),
-					methodValue = instance && $.isFunction( instance[options] ) ?
-						instance[ options ].apply( instance, args ) :
-						instance;
+       methodValue = instance && $.isFunction( instance[options] ) ?
+       instance[ options ].apply( instance, args ) :
+       instance;
 
-				if ( methodValue !== instance && methodValue !== undefined ) {
-					returnValue = methodValue;
-					return false;
-				}
-			});
+       if ( methodValue !== instance && methodValue !== undefined ) {
+         returnValue = methodValue;
+         return false;
+       }
+     });
 		} else {
 			this.each(function() {
 				var instance = $.data( this, 'wizard' );
