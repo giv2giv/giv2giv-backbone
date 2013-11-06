@@ -1,6 +1,42 @@
 window.indexUrl = "http://localhost/giv2giv-jquery/";
 window.serverUrl = "http://localhost:3000/";
 
+$(document).ready(function() {
+  checkSession();
+  var session = JSON.parse(localStorage.session);
+  var name = session[0]['donor'].donor.name;
+  $('.name').text(name);
+});
+
+
+function getProfile(){
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var accounts = new Backbone.Collection;
+  accounts.url = window.serverUrl + 'api/donors.json';
+
+  accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response,xhr) {
+      console.log(response);
+      localStorage.setItem('profile', JSON.stringify(response));
+
+      var profile = JSON.parse(localStorage.profile)[0]['donor'];
+      $('.profile-username').text(profile.name);
+      $('#email').text(profile.email);
+      if(profile.city || profile.state || profile.zip || profile.address || profile.phone_number) {
+        $('#address').text(profile.address);
+        $('#city').text(profile.city + ", " + profile.state + ", " + profile.zip);
+        $('#phone').text(profile.phone_number);
+      }
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+      redirect("index.html");
+    }
+  });
+}
+
 function signIn(){
   var accounts = new Backbone.Collection;
   accounts.url = window.serverUrl + 'api/sessions/create.json';
@@ -45,15 +81,15 @@ function goToDashboard(){
 }
 
 function checkSession() {
-  if(localStorage.getItem('session') == null){
+  if(localStorage.session == null){
     redirect("index.html");
   }
 }
 
 function logOut(){
   var accounts = new Backbone.Collection;
-  var session = JSON.parse(localStorage.getItem('session'));
-  var token = session[0]['session'].token;
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
   accounts.url = window.serverUrl + 'api/sessions/destroy.json';
 
   accounts.fetch({
@@ -114,8 +150,8 @@ function createEndowment(){
     charity_id.push($(val).attr("value"));
   })
 
-  var session = JSON.parse(localStorage.getItem('session'));
-  var token = session[0]['session'].token;
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
   var name = $('#name').val();
   var minimum_donation_amount = $('#minimum_donation_amount').val();
   var val1 = $("#public").is(":checked");
