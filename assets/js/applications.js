@@ -79,7 +79,21 @@ function signIn(){
     },
     error: function (errorResponse) {
       console.log(errorResponse);
-      redirect("index.html");
+      if ($('#input-username').val().length == 0 && $('#input-password').val().length == 0) {
+        $.pnotify({
+          title: 'Oh No!',
+          text: 'Fill email and password please',
+          type: 'error'
+        });
+      } else {
+        $('#input-username').val("");
+        $('#input-password').val("");
+        $.pnotify({
+          title: 'Oh No!',
+          text: 'Invalid email and password. Plase check again.',
+          type: 'error'
+        });
+      }
     }
   });
 }
@@ -162,6 +176,51 @@ function addToList(source) {
     $('#input20').append("<option id=" + val.charity['id'] + ">" + val.charity['name'] + "</option>");
   });
 }
+
+function getCharities() {
+  var charities = new Backbone.Collection;
+  charities.url = window.serverUrl + 'api/charity.json';
+
+  charities.fetch({
+    data: { "page":"1", "per_page":"400" },
+    success: function(response,xhr) {
+      window.charities = JSON.stringify(response);
+      $.each(JSON.parse(window.charities), function(key, val) {
+        $('#charities').append('<li><a href="detail_charity.html" onclick="detailCharity('+val["charity"].id+');">'+ val['charity'].name +'<span style="font-size: 11px; display: block;" class="muted">' + val['charity'].city + '</span></a></li>')
+      });
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
+function detailCharity(id) {
+  localStorage.setItem('idCharity', id);
+  redirect("detail_charity.html");
+}
+
+function getDetailCharity() {
+  var charities = new Backbone.Collection;
+  charities.url = window.serverUrl + 'api/charity/' + localStorage.idCharity + '.json';
+
+  charities.fetch({
+    success: function(response,xhr) {
+      window.charity = JSON.stringify(response);
+      var charity = JSON.parse(window.charity);
+      $('#name').text(charity[0]['charity'].name);
+      $('#email').text(charity[0]['charity'].email);
+      $('#address').text(charity[0]['charity'].address);
+      $('#city').text(charity[0]['charity'].city + ", " + charity[0]['charity'].state + ", " + charity[0]['charity'].zip);
+      $('#classification').text(charity[0]['charity'].classification_code);
+      $('#ntee').text(charity[0]['charity'].ntee_code);
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
 
 function createEndowment(){
   if (!$(".form-endowment").valid()) return;
