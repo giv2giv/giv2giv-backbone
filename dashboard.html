@@ -186,7 +186,7 @@
                 </div>
               </div>
               <div id="logout-ribbon">
-                <a><i class="icon-off" onclick="logOut();"></i></a>
+                <a><i class="icon-off" onclick="signOut();"></i></a>
               </div>
             </div>
           </div>
@@ -348,6 +348,11 @@
 <script type="text/javascript" src="assets/js/underscore.js"></script>
 <script type="text/javascript" src="assets/js/backbone.js"></script>
 <script type="text/javascript" src="assets/js/backbone_datalink.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  checkSession();
+});
+</script>
 </body>
 
 </html>
