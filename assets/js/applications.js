@@ -1,5 +1,6 @@
 window.indexUrl = "http://localhost/giv2giv-jquery/";
 window.serverUrl = "http://localhost:3000/";
+// window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
 });
@@ -43,7 +44,6 @@ function getProfile(){
 }
 
 function endowmentDetails(){
-  // curl -X GET -H "Content-Type: application/json" -d '' http://localhost:3000/api/endowment/1.json
   var session = JSON.parse(localStorage.session);
   var donorId = session[0]['donor']['donor'].id;
 
@@ -111,8 +111,16 @@ function signUp(){
       localStorage.setItem('session', JSON.stringify(response));
       redirect("index.html");
     },
-    error: function (errorResponse) {
-      console.log(errorResponse);
+    error: function (response, errorResponse) {
+      window.errors = JSON.parse(errorResponse.responseText);
+      string = Object.keys(window.errors)[0]
+      $.pnotify({
+        title: 'Oh No!',
+        text: string + " "+ window.errors['email'][0],
+        type: 'error'
+      });
+      $('#email').val("");
+      $('#password').val("");
     }
   });
 }
@@ -156,10 +164,8 @@ function endowmentFirstStep(){
   charities.fetch({
     data: { "page":"1", "per_page":"400" },
     success: function(response,xhr) {
-      // console.log(response);
       window.charities = response;
       addToList(JSON.stringify(window.charities));
-      // localStorage.setItem('charities', JSON.stringify(response));
     },
     error: function (errorResponse) {
       console.log(errorResponse);
