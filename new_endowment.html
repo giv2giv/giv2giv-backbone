@@ -38,6 +38,7 @@
 
   <!-- Select2 -->
   <link rel="stylesheet" href="plugins/select2/select2.css" media="screen">
+  <link rel="stylesheet" href="plugins/pnotify/jquery.pnotify.css" media="screen">
 
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -172,8 +173,7 @@
                           <div class="control-group">
                             <label class="control-label" for="input02">Description</label>
                             <div class="controls">
-                              <!-- <textarea id="input02 description" class="span12" name="endowment[description]"></textarea> -->
-                              <input type="text" name="endowment[description]" class="span12" id="description"/>
+                              <input type="text" name="endowment[description]" class="required span12" id="description">
                             </div>
                           </div>
 
@@ -181,8 +181,8 @@
                             <input id="endowsment-submit" class="btn hidden" type="submit" value="Next" name="commit">
                             <a class="btn endowment-first-step" onclick="endowmentFirstStep();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Next ►</a>
                           </div>
-
                         </fieldset>
+
                         <fieldset class="wizard-step">
                           <legend class="wizard-label"><i class="icon-user"></i> Add Charity to Group</legend>
                           <div class="control-group">
@@ -193,26 +193,12 @@
                             </div>
                           </div>
 
-                          <!-- <div class="control-group">
-                            <label class="control-label" for="picklist-ex">Fruits in Basket</label>
-                            <div class="controls">
-                              <select id="picklist-ex" name="picklist[]">
-                              </select>
-                              <p class="help-block">Use shift and control keys to select multiple items</p>
-                            </div>
-                          </div> -->
-
-                          <!-- <div class="control-group">
-                            <label class="control-label">Charity Id <span class="required">*</span></label>
-                            <div class="controls">
-                              <input type="text" name="endowment[charity_id]" class="required span12" id="charity_id">
-                            </div>
-                          </div> -->
                           <div class="form-actions btn-toolbar">
                             <input id="endowsment-submit" class="btn hidden" type="submit" value="Next" name="commit">
                             <a class="btn add-charity" onclick="createEndowment();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Create Endowment</a>
                           </div>
                         </fieldset>
+
                         <fieldset class="wizard-step">
                           <legend class="wizard-label"><i class="icon-ok"></i> Subscribe/ Donate Page</legend>
                           <div class="control-group">
@@ -281,6 +267,7 @@
   <script type="text/javascript" src="assets/js/underscore.js"></script>
   <script type="text/javascript" src="assets/js/backbone.js"></script>
   <script type="text/javascript" src="assets/js/backbone_datalink.js"></script>
+  <script src="plugins/pnotify/jquery.pnotify.min.js"></script>
   <script type="text/javascript">
   $(document).ready(function() {
     checkSession();

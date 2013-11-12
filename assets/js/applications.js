@@ -1,6 +1,5 @@
 window.indexUrl = "http://localhost/giv2giv-jquery/";
-window.serverUrl = "http://localhost:3000/";
-// window.serverUrl = "https://api.giv2giv.org/";
+window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
 });
@@ -12,6 +11,12 @@ function checkSession() {
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
     $('.name').text(name);
+  }
+}
+
+function checkSessionIndex() {
+  if(localStorage.session !== null){
+    goToDashboard();
   }
 }
 
@@ -54,7 +59,7 @@ function endowmentDetails(){
     headers: {'Authorization' :'Token token=' + token},
     data: { id: endowment_id, charity_id: charity_id.toString() },
     type: "POST",
-    success: function(response,xhr) {
+    success: function(response, xhr) {
       console.log(response);
       $('.form-actions').find('button:contains(Next)').click();
     },
@@ -72,7 +77,7 @@ function signIn(){
   accounts.fetch({
     data: data,
     type: "POST",
-    success: function(response,xhr) {
+    success: function(response, xhr) {
       console.log(response);
       localStorage.setItem('session', JSON.stringify(response));
       goToDashboard();
@@ -154,35 +159,6 @@ function redirect(data){
   window.location.href = url;
 }
 
-function endowmentFirstStep(){
-  if (!$(".form-endowment").valid()) return;
-  $("input.endowment-first-step").val("LOADING..");
-
-  var charities = new Backbone.Collection;
-  charities.url = window.serverUrl + 'api/charity.json';
-
-  charities.fetch({
-    data: { "page":"1", "per_page":"400" },
-    success: function(response,xhr) {
-      window.charities = response;
-      addToList(JSON.stringify(window.charities));
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
-
-  var aaa = JSON.parse(localStorage.getItem('charities'));
-
-  $('.form-actions').find('button:contains(Next)').click();
-}
-
-function addToList(source) {
-  $.each(JSON.parse(source), function(key, val) {
-    $('#input20').append("<option id=" + val.charity['id'] + ">" + val.charity['name'] + "</option>");
-  });
-}
-
 function getCharities() {
   var charities = new Backbone.Collection;
   charities.url = window.serverUrl + 'api/charity.json';
@@ -227,6 +203,32 @@ function getDetailCharity() {
   });
 }
 
+function addToList(source) {
+  $.each(JSON.parse(source), function(key, val) {
+    $('#input20').append("<option id=" + val.charity['id'] + ">" + val.charity['name'] + "</option>");
+  });
+}
+
+function endowmentFirstStep(){
+  if (!$(".form-endowment").valid()) return;
+  $("input.endowment-first-step").val("LOADING..");
+
+  var charities = new Backbone.Collection;
+  charities.url = window.serverUrl + 'api/charity.json';
+
+  charities.fetch({
+    data: { "page":"1", "per_page":"400" },
+    success: function(response,xhr) {
+      window.charities = response;
+      addToList(JSON.stringify(window.charities));
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+
+  $('.form-actions').find('button:contains(Next)').click();
+}
 
 function createEndowment(){
   if (!$(".form-endowment").valid()) return;
@@ -251,6 +253,22 @@ function createEndowment(){
     description: description
   };
 
+
+  if (charity_id.length == 0) {
+    $.pnotify({
+      title: 'Oops!',
+      text: "Please select charities first.",
+      type: 'error'
+    });
+  } else {
+    creatingEndowment(data, token);
+
+    var endowment_id = JSON.parse(localStorage.endowment_id);
+    addCharityToGroup(endowment_id, charity_id, token);
+  }
+}
+
+function creatingEndowment(data, token) {
   var endowments = new Backbone.Collection;
   endowments.url = window.serverUrl + 'api/endowment.json';
 
@@ -259,17 +277,18 @@ function createEndowment(){
     data: data,
     type: "POST",
     success: function(response,xhr) {
-      console.log(response);
       localStorage.setItem('endowment_id', JSON.stringify(response));
-      $('.form-actions').find('button:contains(Next)').click();
+      // $('.form-actions').find('button:contains(Next)').click();
     },
     error: function (errorResponse) {
       console.log(errorResponse);
     }
   });
+}
 
-  var endowment_id = JSON.parse(localStorage.getItem('endowment_id'));
+function addCharityToGroup(endowment_id, charity_id, token) {
   var endowment_id = endowment_id[0]['endowment']['id'];
+
   var charities = new Backbone.Collection;
   charities.url = window.serverUrl + 'api/endowment/' + endowment_id + '/add_charity.json';
 
