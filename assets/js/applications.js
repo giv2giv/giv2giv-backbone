@@ -1,5 +1,6 @@
 window.indexUrl = "http://localhost/giv2giv-jquery/";
-window.serverUrl = "https://api.giv2giv.org/";
+window.serverUrl = "http://localhost:3000/";
+// window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
 });
@@ -15,7 +16,7 @@ function checkSession() {
 }
 
 function checkSessionIndex() {
-  if(localStorage.session !== null){
+  if (localStorage.getItem("session") !== null){
     goToDashboard();
   }
 }
@@ -168,7 +169,7 @@ function getCharities() {
     success: function(response,xhr) {
       window.charities = JSON.stringify(response);
       $.each(JSON.parse(window.charities), function(key, val) {
-        $('#charities').append('<li><a href="detail_charity.html" onclick="detailCharity('+val["charity"].id+');">'+ val['charity'].name +'<span style="font-size: 11px; display: block;" class="muted">' + val['charity'].city + '</span></a></li>')
+        $('#charities').append('<li><a href="charity_details.html" onclick="detailCharity('+val["charity"].id+');">'+ val['charity'].name +'<span style="font-size: 11px; display: block;" class="muted">' + val['charity'].city + '</span></a></li>')
       });
     },
     error: function (errorResponse) {
@@ -179,7 +180,7 @@ function getCharities() {
 
 function detailCharity(id) {
   localStorage.setItem('idCharity', id);
-  redirect("detail_charity.html");
+  redirect("charity_details.html");
 }
 
 function getDetailCharity() {
@@ -302,6 +303,108 @@ function addCharityToGroup(endowment_id, charity_id, token) {
     },
     error: function (errorResponse) {
       console.log(errorResponse);
+    }
+  });
+}
+
+function getEndowments() {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var endowments = new Backbone.Collection;
+  endowments.url = window.serverUrl + 'api/donors/endowments.json';
+
+  endowments.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response, xhr) {
+      console.log(response);
+      addToEndowmentList(JSON.stringify(response));
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
+function addToEndowmentList(source) {
+  $.each(JSON.parse(source), function(key, val) {
+    $('#container-endowments').append("<li><a href='endowment_details.html' onclick='detailEndowment("+ val.endowment['id'] +");' class='stat summary'><span class='sparkline'></span><span class='digit'>" + val.endowment['name'] + "</span> <span class='text'>Balance</span></a></li>");
+  });
+}
+
+function detailEndowment(id, name) {
+  localStorage.setItem('idEndowment', id);
+  redirect("endowment_details.html");
+}
+
+function getDetailEndowment() {
+  $('#endowment_id').text(localStorage.idEndowment);
+  var endowments = new Backbone.Collection;
+  endowments.url = window.serverUrl + 'api/endowment/' + localStorage.idEndowment + '.json';
+
+  endowments.fetch({
+    success: function(response, xhr) {
+      window.endowment = JSON.stringify(response);
+      var endowment = JSON.parse(window.endowment);
+      $('#name').text(endowment[0]['endowment'].name);
+      $('#description').text(endowment[0]['endowment'].email);
+      $('#current_balance').text("Current Balance");
+      $('#minimum_donation_amount').text(endowment[0]['endowment'].city + ", " + endowment[0]['endowment'].state + ", " + endowment[0]['endowment'].zip);
+    },
+    error: function (errorResponse, response) {
+      console.log(errorResponse);
+      console.log(response);
+    }
+  });
+}
+
+function checkPaymentAccount() {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var payment_accounts = new Backbone.Collection;
+  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response, xhr) {
+      window.payment_accounts = JSON.stringify(response);
+      var payment_accounts = JSON.parse(window.payment_accounts);
+      if (payment_accounts.length == 0) {
+        $('#donate').text("You don't have any payment accounts.")
+      };
+    },
+    error: function (errorResponse, responseText) {
+      console.log(errorResponse);
+      console.log(responseText);
+    }
+  });
+}
+
+function donateEndowment(id) {
+  redirect("donate.html")
+}
+
+function createPaymentAccount() {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var payment_accounts = new Backbone.Collection;
+  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
+
+  data = {
+    processor: "stripe",
+    stripeToken: ""
+  }
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    data: data,
+    type: "POST",
+    success: function(response, xhr) {
+      window.payment_accounts = JSON.stringify(response);
+      var payment_accounts = JSON.parse(window.payment_accounts);
+    },
+    error: function (errorResponse, responseText) {
+      console.log(errorResponse);
+      console.log(responseText);
     }
   });
 }
