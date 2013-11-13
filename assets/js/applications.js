@@ -332,7 +332,10 @@ function getEndowments() {
   endowments.url = window.serverUrl + 'api/endowment.json';
   $('#loader-endowment').show();
 
+  var keyword = window.location.search.replace("?query=", "");
+
   endowments.fetch({
+    data: {query: keyword},
     success: function(response, xhr) {
       console.log(response);
       addToEndowmentList(JSON.stringify(response));
