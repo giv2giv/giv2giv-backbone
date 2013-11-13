@@ -12,133 +12,217 @@
   <meta name="author" content="">
 
   <!-- Bootstrap Stylesheet -->
-  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" media="screen">
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" media="all">
+
+  <!-- jquery-ui Stylesheets -->
+  <link rel="stylesheet" href="assets/jui/css/jquery-ui.css" media="screen">
+  <link rel="stylesheet" href="assets/jui/jquery-ui.custom.css" media="screen">
+  <link rel="stylesheet" href="assets/jui/timepicker/jquery-ui-timepicker.css" media="screen">
 
   <!-- Uniform Stylesheet -->
   <link rel="stylesheet" href="plugins/uniform/css/uniform.default.css" media="screen">
 
   <!-- Plugin Stylsheets first to ease overrides -->
 
+  <!-- iButton -->
+  <link rel="stylesheet" href="plugins/ibutton/jquery.ibutton.css" media="screen">
+
+  <!-- Circular Stat -->
+  <link rel="stylesheet" href="custom-plugins/circular-stat/circular-stat.css">
+
+  <!-- Fullcalendar -->
+  <link rel="stylesheet" href="plugins/fullcalendar/fullcalendar.css" media="screen">
+  <link rel="stylesheet" href="plugins/fullcalendar/fullcalendar.print.css" media="print">
+
   <!-- End Plugin Stylesheets -->
 
   <!-- Main Layout Stylesheet -->
   <link rel="stylesheet" href="assets/css/fonts/icomoon/style.css" media="screen">
-  <link rel="stylesheet" href="assets/css/login.css" media="screen">
-  <link rel="stylesheet" href="plugins/zocial/zocial.css" media="screen">
-  <link rel="stylesheet" href="plugins/pnotify/jquery.pnotify.css" media="screen">
+  <link rel="stylesheet" href="assets/css/main-style.css" media="screen">
 
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<title>MoonCake :: Responsive Admin Template - Login</title>
+<title>Giv2Giv - Dashboard</title>
 
 </head>
 
-<body>
+<body data-show-sidebar-toggle-button="true" data-fixed-sidebar="false">
 
-
-  <div id="login-wrap">
-
-    <div id="login-ribbon"><i class="icon-lock"></i></div>
-
-    <div id="login-buttons">
-     <div class="btn-wrap">
-      <button type="button" class="btn btn-inverse" data-target="#login-form"><i class="icon-key"></i></button>
-    </div>
-    <div class="btn-wrap">
-      <button type="button" class="btn btn-inverse" data-target="#register-form"><i class="icon-edit"></i></button>
-    </div>
-    <div class="btn-wrap">
-      <button type="button" class="btn btn-inverse" data-target="#forget-form"><i class="icon-question-sign"></i></button>
+  <div id="customizer">
+    <div id="layoutMode">
+      <label class="checkbox"><input type="checkbox" class="uniform" name="layout-mode" value="boxed"> Boxed</label>
     </div>
   </div>
 
-  <div id="login-inner" class="login-inset">
+  <div id="wrapper">
+    <header id="header" class="navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <div class="brand-wrap pull-left">
+            <div class="brand-img">
+              <a class="brand" href="#">
+                <img src="assets/images/logo.png" alt="" style="width: 135px; height: 35px;">
+              </a>
+            </div>
+          </div>
 
-   <div id="login-circle">
-    <section id="login-form" class="login-inner-form" data-angle="0">
-     <h1>Login</h1>
-     <form class="form-vertical" method="post">
-      <div class="control-group-merged">
-       <div class="control-group">
-        <input type="text" placeholder="Email" name="[email]" id="input-username" class="big required">
+          <div id="header-right" class="clearfix">
+            <div id="nav-toggle" data-toggle="collapse" data-target="#navigation" class="collapsed">
+              <i class="icon-caret-down"></i>
+            </div>
+
+            <div id="header-functions" class="pull-right" style="display: none;">
+              <div id="user-info" class="clearfix">
+                <span class="info">
+                  Welcome
+                  <span class="name"></span>
+                </span>
+                <div class="avatar">
+                  <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                    <img src="assets/images/pp.jpg" alt="Avatar">
+                  </a>
+                  <ul class="dropdown-menu pull-right">
+                    <li><a href="profile.html"><i class="icol-user"></i> My Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="index.html" onclick="signOut();"><i class="icol-key"></i> Logout</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div id="logout-ribbon">
+                <a><i class="icon-off" onclick="signOut();"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="control-group">
-        <input type="password" placeholder="Password" name="[password]" id="input-password" class="big required">
+    </header>
+
+    <div id="content-wrap">
+      <div id="content">
+        <div id="content-outer">
+          <div id="content-inner">
+            <aside id="sidebar">
+              <nav id="navigation" class="collapse">
+                <ul>
+                  <li class="active">
+                    <ul class="inner-nav">
+                      <li class="active"><a href="index.html"><i class="icol-dashboard"></i> Dashboard</a></li>
+                      <li><a href="new_endowment.html"><i class="icol-wand"></i> Endowments</a></li>
+                      <li><a href="profile.html"><i class="icol-user"></i> Profile Page</a></li>
+                      <li><a href="charities.html"><i class="icol-table"></i> Charities</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+            </aside>
+
+            <div id="sidebar-separator"></div>
+
+            <section id="main" class="clearfix">
+              <div id="main-header" class="page-header">
+                <ul class="breadcrumb">
+                </ul>
+
+                <h3/>
+                <ul class="stats-container">
+                  <a href="new_endowment.html">Create Endowment</a>
+                  <li>
+                    <form class="navbar-search">
+                      <input type="text" class="search-query" placeholder="Search">
+                    </form>
+                  </li>
+                </ul>
+              </div>
+
+              <li id="loader-endowment" style="text-align: center;"><img src="assets/images/preloaders/14.gif" alt=""></li>
+
+              <div id="main-content">
+                <h3>
+                  My Endowments
+                </h3>
+                <ul class="stats-container" id="container-endowments">
+                </ul>
+
+                <div id="endowment-details" style="display: none;">
+
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="form-actions">
-     <button type="submit" class="btn btn-success btn-block btn-large" onclick="signIn(); return false;">Login</button>
-   </div>
- </form>
-</section>
 
-<section id="register-form" class="login-inner-form" data-angle="90">
- <h1>Register</h1>
- <form class="form-vertical" method="post">
-  <div class="control-group">
-   <label class="control-label">Fullname</label>
-   <div class="controls">
-    <input type="text" name="[fullname]" class="required" id="fullname">
+    <footer id="footer">
+      <div class="footer-right"><p>Copyright 2013. All Rights Reserved.</p></div>
+    </footer>
+
   </div>
-</div>
-<div class="control-group">
-  <label class="control-label">Email</label>
-  <div class="controls">
-    <input type="text" name="[email]" class="required email" id="email">
-  </div>
-</div>
-<div class="control-group">
-  <label class="control-label">Password</label>
-  <div class="controls">
-    <input type="password" name="[password]" class="required" id="password">
-  </div>
-</div>
-<div class="form-actions">
- <button type="submit" class="btn btn-danger btn-block btn-large" onclick="signUp(); return false;">Register</button>
-</div>
-</form>
-</section>
-<section id="forget-form" class="login-inner-form" data-angle="180">
- <h1>Reset Password</h1>
- <form class="form-vertical" action="dashboard.html">
-  <div class="control-group">
-   <div class="controls">
-    <input type="text" name="Reset[email]" class="big required email" placeholder="Enter Your Email...">
-  </div>
-</div>
-<div class="form-actions">
- <button type="submit" class="btn btn-danger btn-block btn-large">Reset</button>
-</div>
-</form>
-</section>
-</div>
 
-</div>
-</div>
+  <!-- Core Scripts -->
+  <script src="assets/js/libs/jquery-1.8.3.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script src="assets/js/libs/jquery.placeholder.min.js"></script>
+  <script src="assets/js/libs/jquery.mousewheel.min.js"></script>
 
-<!-- Core Scripts -->
-<script src="assets/js/libs/jquery-1.8.3.min.js"></script>
-<script src="assets/js/libs/jquery.placeholder.min.js"></script>
+  <!-- Template Script -->
+  <script src="assets/js/template.js"></script>
+  <script src="assets/js/setup.js"></script>
 
-<!-- Login Script -->
-<script src="assets/js/login.js"></script>
+  <!-- Customizer, remove if not needed -->
+  <script src="assets/js/customizer.js"></script>
 
-<!-- Validation -->
-<script src="plugins/validate/jquery.validate.min.js"></script>
+  <!-- Uniform Script -->
+  <script src="plugins/uniform/jquery.uniform.min.js"></script>
 
-<!-- Uniform Script -->
-<script src="plugins/uniform/jquery.uniform.min.js"></script>
+  <!-- jquery-ui Scripts -->
+  <script src="assets/jui/js/jquery-ui-1.9.2.min.js"></script>
+  <script src="assets/jui/jquery-ui.custom.min.js"></script>
+  <script src="assets/jui/timepicker/jquery-ui-timepicker.min.js"></script>
+  <script src="assets/jui/jquery.ui.touch-punch.min.js"></script>
+
+  <!-- Plugin Scripts -->
+
+  <!-- Flot -->
+<!--[if lt IE 9]>
+<script src="assets/js/libs/excanvas.min.js"></script>
+<![endif]-->
+<script src="plugins/flot/jquery.flot.min.js"></script>
+<script src="plugins/flot/plugins/jquery.flot.tooltip.min.js"></script>
+<script src="plugins/flot/plugins/jquery.flot.pie.min.js"></script>
+<script src="plugins/flot/plugins/jquery.flot.resize.min.js"></script>
+
+<!-- Circular Stat -->
+<script src="custom-plugins/circular-stat/circular-stat.min.js"></script>
+
+<!-- SparkLine -->
+<script src="plugins/sparkline/jquery.sparkline.min.js"></script>
+
+<!-- iButton -->
+<script src="plugins/ibutton/jquery.ibutton.min.js"></script>
+
+<!-- Full Calendar -->
+<script src="plugins/fullcalendar/fullcalendar.min.js"></script>
+
+<!-- DataTables -->
+<script src="plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="plugins/datatables/TableTools/js/TableTools.min.js"></script>
+<script src="plugins/datatables/dataTables.bootstrap.js"></script>
+
+<!-- Demo Scripts -->
+<script src="assets/js/demo/dashboard.js"></script>
 <script type="text/javascript" src="assets/js/applications.js"></script>
 <script type="text/javascript" src="assets/js/underscore.js"></script>
 <script type="text/javascript" src="assets/js/backbone.js"></script>
 <script type="text/javascript" src="assets/js/backbone_datalink.js"></script>
-<script src="plugins/pnotify/jquery.pnotify.min.js"></script>
+<script type="text/javascript" src="assets/js/modal.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-  // checkSessionIndex();
+  checkSession();
+  getEndowments();
 });
 </script>
 </body>
