@@ -90,7 +90,11 @@ function signIn(){
     success: function(response, xhr) {
       console.log(response);
       localStorage.setItem('session', JSON.stringify(response));
-      goToDashboard();
+      if (localStorage.idEndowment) {
+        redirect("donate.html")
+      } else {
+        goToDashboard();
+      }
     },
     error: function (errorResponse) {
       console.log(errorResponse);
@@ -350,7 +354,13 @@ function getEndowments() {
 function addToEndowmentList(source) {
   $.each(JSON.parse(source), function(key, val) {
     $('#container-endowments').append("<li id='button-modal-"+ val.endowment['id'] +"'><a href='#' onclick='detailEndowment("+ val.endowment['id'] +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment['name'] + "</span>0</span></a></li>");
-    $('#endowment-details').append("<ul style='text-align: left;' id='dialog-modal-"+ val.endowment['id'] +"' class='stats-container'><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Description</span>"+ val.endowment['description'] +"</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Current Balance</span>balance</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Minimum Donation Amount</span>"+ val.endowment['minimum_donation_amount'] +"</span></a></li></ul>");
+
+    if (localStorage.session == null) {
+      $('#endowment-details').append("<ul style='text-align: left;' id='dialog-modal-"+ val.endowment['id'] +"' class='stats-container'><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Description</span>"+ val.endowment['description'] +"</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Current Balance</span>balance</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Minimum Donation Amount</span>"+ val.endowment['minimum_donation_amount'] +"</span></a></li><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></ul>");
+    } else {
+      $('#endowment-details').append("<ul style='text-align: left;' id='dialog-modal-"+ val.endowment['id'] +"' class='stats-container'><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Description</span>"+ val.endowment['description'] +"</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Current Balance</span>balance</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Minimum Donation Amount</span>"+ val.endowment['minimum_donation_amount'] +"</span></a></li><hr><li><a href='#' class='stat summary'><span><i></i></span><br/><span class='digit'><span class='text'>My Donations</span>0</span><span class='digit'><span class='text'>My Grants</span>0</span><span class='digit'><span class='text'>My Balance</span>0</span></a></li></ul>");
+    }
+
   });
 }
 
@@ -411,28 +421,35 @@ function getDetailEndowment() {
 }
 
 function checkPaymentAccount() {
-  var session = JSON.parse(localStorage.session);
-  var token = session[0]['session']['session'].token;
-  var payment_accounts = new Backbone.Collection;
-  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
+  if (localStorage.session == null) {
+    redirect("login.html");
+  } else {
+    var session = JSON.parse(localStorage.session);
+    var token = session[0]['session']['session'].token;
+    var payment_accounts = new Backbone.Collection;
+    payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
 
-  payment_accounts.fetch({
-    headers: {'Authorization' :'Token token=' + token},
-    success: function(response, xhr) {
-      window.payment_accounts = JSON.stringify(response);
-      var payment_accounts = JSON.parse(window.payment_accounts);
-      if (payment_accounts.length == 0) {
-        $('#donate').text("You don't have any payment accounts.")
-      };
-    },
-    error: function (errorResponse, responseText) {
-      console.log(errorResponse);
-      console.log(responseText);
-    }
-  });
+    payment_accounts.fetch({
+      headers: {'Authorization' :'Token token=' + token},
+      success: function(response, xhr) {
+        window.payment_accounts = JSON.stringify(response);
+        var payment_accounts = JSON.parse(window.payment_accounts);
+        if (payment_accounts.length == 0) {
+          $('#donate').text("Form Payment Accounts")
+        } else{
+          $('#donate').text("Form Donate")
+        }
+      },
+      error: function (errorResponse, responseText) {
+        console.log(errorResponse);
+        console.log(responseText);
+      }
+    });
+  }
 }
 
 function donateEndowment(id) {
+  localStorage.setItem('idEndowment', id);
   redirect("donate.html")
 }
 
