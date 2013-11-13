@@ -15,7 +15,7 @@
  * Licensed under the MIT license
  *
  */
- 
+
 .contact-list
 {
     width: auto;
@@ -110,7 +110,7 @@
     border-width: 1px 0;
 }
 
-.contact-list .contact-contents .title, 
+.contact-list .contact-contents .title,
 .contact-list .contact-filter
 {
     background-color: #fafafa;
@@ -190,5 +190,5 @@
 
 .contact-list .contact-filter input
 {
-    width: 100%;
+    width: 96%;
 }
