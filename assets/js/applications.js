@@ -25,6 +25,7 @@ function checkSession() {
       localStorage.removeItem('endowment_id');
     }
     getProfile();
+    checkPaymentAccount();
   }
 }
 
@@ -593,13 +594,12 @@ function checkPaymentAccount() {
         window.payment_accounts = JSON.stringify(response);
         var payment_accounts = JSON.parse(window.payment_accounts);
         if (payment_accounts.length == 0) {
-          $('#donate').text("Form Payment Accounts")
+          $('#donate').html("<form class='form-vertical' method='post'><input type='text' placeholder='stripeToken' name='[stripeToken]' id='input-stripe-token'><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;'>Create Payment Account</button></form>")
         } else{
           var str = window.location.pathname;
           if (str.indexOf("index") !== -1) {
             $.each(payment_accounts, function(key, val) {
               $('#donate').append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val['payment_account'].processor + "</span>"+ val['payment_account'].id +"</span></a></li>");
-              // $('#donate').text("mmmmmmmmmmmm")
             });
           } else {
             $('#donate').text("Form Donate")
@@ -614,20 +614,16 @@ function checkPaymentAccount() {
 }
 }
 
-function donateEndowment(id) {
-  localStorage.setItem('idEndowment', id);
-  redirect("donate.html")
-}
-
 function createPaymentAccount() {
   var session = JSON.parse(localStorage.session);
   var token = session[0]['session']['session'].token;
   var payment_accounts = new Backbone.Collection;
   payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
 
-  data = {
+  var stripe_token = $('#input-stripe-token').val();
+  var data = {
     processor: "stripe",
-    stripeToken: ""
+    stripeToken: stripe_token
   }
 
   payment_accounts.fetch({
@@ -635,8 +631,16 @@ function createPaymentAccount() {
     data: data,
     type: "POST",
     success: function(response, xhr) {
+      console.log(response);
       window.payment_accounts = JSON.stringify(response);
       var payment_accounts = JSON.parse(window.payment_accounts);
+      $.pnotify({
+        title: 'Yeah',
+        text: "Successfully create payment account.",
+        type: 'success'
+      });
+      $('#donate').html("<ul id='donate' class='stats-container'></ul>");
+      $('#donate').append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>Stripe</span>"+ response.id +"</span></a></li>");
     },
     error: function (errorResponse, responseText) {
       console.log(errorResponse);
@@ -644,3 +648,10 @@ function createPaymentAccount() {
     }
   });
 }
+
+function donateEndowment(id) {
+  localStorage.setItem('idEndowment', id);
+  redirect("donate.html")
+}
+
+
