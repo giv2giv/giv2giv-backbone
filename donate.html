@@ -87,23 +87,12 @@
             <div id="header-functions" class="pull-right" style="display: none;">
               <div id="user-info" class="clearfix">
                 <span class="info">
-                  Welcome
+
                   <span class="name"></span>
                 </span>
-                <div class="avatar">
-                  <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                    <img src="assets/images/pp.jpg" alt="Avatar">
-                  </a>
-                  <ul class="dropdown-menu pull-right">
-                    <li><a href="profile.html"><i class="icol-user"></i> My Profile</a></li>
-                                        <li class="divider"></li>
-                    <li><a href="index.html" onclick="signOut();"><i class="icol-key"></i> Logout</a></li>
-                  </ul>
-                </div>
+
               </div>
-              <div id="logout-ribbon">
-                <a><i class="icon-off" onclick="signOut();"></i></a>
-              </div>
+
             </div>
           </div>
         </div>
@@ -120,8 +109,7 @@
                   <li class="active">
                     <ul class="inner-nav">
                       <li><a href="index.html"><i class="icol-dashboard"></i> Dashboard</a></li>
-                      <li class="active"><a href="new_endowment.html"><i class="icol-wand"></i> Endowments</a></li>
-                      <li><a href="profile.html"><i class="icol-user"></i> Profile Page</a></li>
+
                       <li><a href="charities.html"><i class="icol-table"></i> Charities</a></li>
                     </ul>
                   </li>
@@ -142,7 +130,8 @@
                 <div class="row-fluid">
                   <div class="span12 widget">
                     <div class="widget-content form-container">
-                      <span id="donate" />
+                      <ul id="donate">
+                      </ul>
                     </div>
 
                   </div>
@@ -208,7 +197,7 @@
   <script type="text/javascript">
   $(document).ready(function() {
     // checkSession();
-    checkPaymentAccount();
+    // checkPaymentAccount();
   });
   </script>
 </body>

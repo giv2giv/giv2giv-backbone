@@ -87,23 +87,12 @@
             <div id="header-functions" class="pull-right">
               <div id="user-info" class="clearfix">
                 <span class="info">
-                  Welcome
+
                   <span class="name"></span>
                 </span>
-                <div class="avatar">
-                  <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                    <img src="assets/images/pp.jpg" alt="Avatar">
-                  </a>
-                  <ul class="dropdown-menu pull-right">
-                    <li><a href="profile.html"><i class="icol-user"></i> My Profile</a></li>
-                    <li class="divider"></li>
-                    <li><a href="index.html" onclick="signOut();"><i class="icol-key"></i> Logout</a></li>
-                  </ul>
-                </div>
+
               </div>
-              <div id="logout-ribbon">
-                <a><i class="icon-off" onclick="signOut();"></i></a>
-              </div>
+
             </div>
           </div>
         </div>
@@ -120,8 +109,7 @@
                   <li class="active">
                     <ul class="inner-nav">
                       <li><a href="index.html"><i class="icol-dashboard"></i> Dashboard</a></li>
-                      <li class="active"><a href="new_endowment.html"><i class="icol-wand"></i> Endowments</a></li>
-                      <li><a href="profile.html"><i class="icol-user"></i> Profile Page</a></li>
+
                       <li><a href="charities.html"><i class="icol-table"></i> Charities</a></li>
                     </ul>
                   </li>
@@ -136,6 +124,8 @@
                 <ul class="breadcrumb">
                 </ul>
               </div>
+
+              <div id="loader" style="text-align: center; display: none;"><img src="assets/images/preloaders/8.gif" alt=""></div>
 
               <div id="main-content">
 
@@ -199,7 +189,7 @@
                           <div class="control-group">
                             <label class="control-label">Endowment created!</label>
                             <br />
-                            <a class="btn add-charity" onclick="createEndowment();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Schedule Donations</a>
+                            <a class="btn add-charity" onclick="" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Schedule Donations</a>
                             <br />
                             <a class="btn add-charity" onclick="goToDashboard();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Skip this step & return to dashboard</a>
                           </div>

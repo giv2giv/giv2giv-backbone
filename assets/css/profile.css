@@ -1,4 +1,4 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
  * MoonCake v1.3.1 - Mail Page Stylesheet
  *
@@ -12,7 +12,7 @@
  *
  */
 
-/* Profile Page
+/* Donor Profile
 ================================================== */
 
 .profile
@@ -30,7 +30,7 @@
     position: relative;
 }
 
-.profile:after, 
+.profile:after,
 .profile:before
 {
     content: '';
@@ -66,7 +66,7 @@
     top: 0;
 }
 
-.profile .profile-sidebar .thumbnail, 
+.profile .profile-sidebar .thumbnail,
  .profile .profile-sidebar .nav
 {
     background-color: #fff;
@@ -94,7 +94,7 @@
 /* Profile Content
 ================================================== */
 
-.profile .profile-head, 
+.profile .profile-head,
 .profile .profile-content
 {
     padding: 20px 20px 20px 240px;
@@ -127,7 +127,7 @@
     line-height: 1;
 }
 
-.profile .profile-attributes, 
+.profile .profile-attributes,
 .profile .profile-attributes li
 {
     margin: 0;
@@ -143,11 +143,11 @@
     line-height: 16px;
 }
 
-.profile .profile-attributes li [class^="icon-"], 
-.profile .profile-attributes li [class^="icol-"], 
-.profile .profile-attributes li [class^="icos-"], 
-.profile .profile-attributes li [class*=" icon-"], 
-.profile .profile-attributes li [class*=" icol-"], 
+.profile .profile-attributes li [class^="icon-"],
+.profile .profile-attributes li [class^="icol-"],
+.profile .profile-attributes li [class^="icos-"],
+.profile .profile-attributes li [class*=" icon-"],
+.profile .profile-attributes li [class*=" icol-"],
 .profile .profile-attributes li [class*=" icos-"]
 {
     font-size: 14px;
@@ -164,7 +164,7 @@
         margin-bottom: 4px;
     }
 
-    .profile .profile-head .profile-info, 
+    .profile .profile-head .profile-info,
 	.profile .profile-head .btn-toolbar
     {
         float: none;
@@ -195,7 +195,7 @@
         float: none;
     }
 
-    .profile .profile-head, 
+    .profile .profile-head,
 	.profile .profile-content
     {
         padding-left: 20px;
