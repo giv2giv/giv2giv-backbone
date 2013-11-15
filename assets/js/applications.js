@@ -9,8 +9,15 @@ $(document).ready(function() {
 function checkSession() {
   if(localStorage.session == null){
     $('#header-functions').hide();
+    $('#main-content h3').html("Featured Endowments");
+    getFeaturedEndowments();
+
+    $('.inner-nav').append("<li><a href='login.html'><i class='icol-key'></i> Login</a></li>");
+
   } else{
     $('#header-functions').show();
+    $('#main-content h3').html("My Endowments");
+    getEndowments();
 
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
@@ -490,6 +497,26 @@ function addCharityToGroup(endowment_id, charity_id, token) {
 }
 
 function getEndowments() {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var endowments = new Backbone.Collection;
+  endowments.url = window.serverUrl + 'api/donors/subscriptions.json';
+  $('#loader').show();
+
+  endowments.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response, xhr) {
+      console.log(response);
+      addToEndowmentList(JSON.stringify(response));
+      $('#loader').hide();
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
+function getFeaturedEndowments() {
   var endowments = new Backbone.Collection;
   endowments.url = window.serverUrl + 'api/endowment.json';
   $('#loader').show();
@@ -499,8 +526,9 @@ function getEndowments() {
   endowments.fetch({
     data: {query: keyword},
     success: function(response, xhr) {
-      console.log(response);
-      addToEndowmentList(JSON.stringify(response));
+      window.featured_endowments = JSON.parse(JSON.stringify(response));
+      var featuredEndowments = window.featured_endowments.sort(function() {return 0.5 - Math.random()}).slice(0,5);
+      addToEndowmentList(JSON.stringify(featuredEndowments));
       $('#loader').hide();
     },
     error: function (errorResponse) {
