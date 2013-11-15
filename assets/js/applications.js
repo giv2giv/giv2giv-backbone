@@ -726,12 +726,13 @@ function searchCharities() {
 }
 
 function addToCharityList(source) {
+  $('#container-charities').html("");
   $.each(JSON.parse(source), function(key, val) {
     window.val = val;
     if (val.charity !== undefined) {
-     $('#container-charities').append("<li id='button-modal-"+ val.charity['id'] +"'><a href='#' onclick='detailCharity("+ val.charity['id'] +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.charity['name'] + "</span>0</span></a></li>");
+     $('#container-charities').append("<li id='button-modal-"+ val.charity.id +"'><a href='#' onclick='detailCharity("+ val.charity.id +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.charity.name + "</span>0</span></a></li>");
 
-     $('#charity-details').append("<div id='dialog-modal-"+ val.charity['id'] +"'><p style='text-align: right;'>Visibility: <b>"+ val.charity.charity_visibility +"</b></p><br /><p>charity Name: <b>"+ val.charity.name +"</b></p><p>Description: <b>"+ val.charity.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.charity.minimum_donation_amount +"</b></p><br /><p>My Donations: <b>"+ '-' +"</b></p><p>My Grants: <b>"+ '-' +"</b></p><p>My Balance: <b>"+ '-' +"</b></p><br/><p>giv2giv Donations: <b>"+ '-' +"</b></p><p>giv2giv Grants: <b>"+ '-' +"</b></p><p>giv2giv Balance: <b>"+ '-' +"</b></p><br/></div>");
+     $('#charity-details').append("<div id='dialog-modal-"+ val.charity.id +"'><p>Charity Name: <b>"+ val.charity.name +"</b></p><p>Charity Email: <b>"+ val.charity.email +"</b></p><p>Address: <b>"+ val.charity.address +"</b></p><p>City, State, Zip: <b>"+ '-' +"</b></p><p>Activity: <b>"+ '-' +"</b></p><p>Classification: <b>"+ val.charity.classification_code +"</b></p><p>NTEE: <b>"+ val.charity.ntee_code +"</b></p><br/><p>Total granted to charity from me: <b>"+ '-' +"</b></p><p>Total granted to charity from giv2giv: <b>"+ '-' +"</b><br/></div>");
    }
  });
 }
