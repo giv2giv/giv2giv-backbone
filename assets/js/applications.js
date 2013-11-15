@@ -23,7 +23,7 @@ function checkSession() {
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
     $('.name').text(name);
-    $('.inner-nav').append("<li class='donor_profile'><a href='#'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
+    $('.inner-nav').append("<li class='donor_profile'><a href='#'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li class='active'><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
 
     if ((localStorage.data_endowment !== undefined) && (localStorage.charity_id !== undefined) && (localStorage.session !== undefined)) {
       createEndowment();
@@ -705,4 +705,64 @@ function donateEndowment(id) {
   redirect("donate.html")
 }
 
+function searchCharities() {
+  var charities = new Backbone.Collection;
+  charities.url = window.serverUrl + 'api/charity.json';
+  var data = { query: $('#query').val() }
+  $('#loader').show();
 
+  charities.fetch({
+    data: data,
+    success: function(response, xhr) {
+      $('#loader').hide();
+      window.charities = JSON.stringify(response);
+
+      addToCharityList(JSON.stringify(response));
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
+function addToCharityList(source) {
+  $.each(JSON.parse(source), function(key, val) {
+    window.val = val;
+    if (val.charity !== undefined) {
+     $('#container-charities').append("<li id='button-modal-"+ val.charity['id'] +"'><a href='#' onclick='detailCharity("+ val.charity['id'] +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.charity['name'] + "</span>0</span></a></li>");
+
+     $('#charity-details').append("<div id='dialog-modal-"+ val.charity['id'] +"'><p style='text-align: right;'>Visibility: <b>"+ val.charity.charity_visibility +"</b></p><br /><p>charity Name: <b>"+ val.charity.name +"</b></p><p>Description: <b>"+ val.charity.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.charity.minimum_donation_amount +"</b></p><br /><p>My Donations: <b>"+ '-' +"</b></p><p>My Grants: <b>"+ '-' +"</b></p><p>My Balance: <b>"+ '-' +"</b></p><br/><p>giv2giv Donations: <b>"+ '-' +"</b></p><p>giv2giv Grants: <b>"+ '-' +"</b></p><p>giv2giv Balance: <b>"+ '-' +"</b></p><br/></div>");
+   }
+ });
+}
+
+function detailCharity(id) {
+  var demos = {
+    basicDialog: function( target, trigger ) {
+      target.dialog({
+        autoOpen: false
+      });
+
+      trigger.on('click', function(e) {
+        target.dialog( 'open' );
+        e.preventDefault();
+      });
+    },
+
+    modalDialog: function( target, trigger ) {
+      target.dialog({
+        autoOpen: false,
+        modal: true
+      });
+
+      trigger.on('click', function(e) {
+        target.dialog( 'open' );
+        e.preventDefault();
+      });
+    }
+  };
+
+  if( $.fn.dialog ) {
+    demos.modalDialog( $('#dialog-modal-'+id), $('#button-modal-'+id) );
+  }
+}
