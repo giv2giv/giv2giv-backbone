@@ -78,7 +78,7 @@ function updateProfile(){
     $('#state').val(profile.state);
     $('#zip').val(profile.zip);
     $('#phone_number').val(profile.phone_number);
-    $('.info .name').text(profile.name)
+    $('.info .name').text(profile.name);
 
     $.pnotify({
       title: 'Yeah',
@@ -87,7 +87,9 @@ function updateProfile(){
     });
 
     $('#loader-profile').hide();
+    $('#profile-modal').dialog('close');
     getProfile();
+    checkPaymentAccount();
   },
   error: function (errorResponse, responseText) {
     console.log(errorResponse);
@@ -117,10 +119,12 @@ function getProfile(){
 
         $('#button-profile-'+ profile.id).click();
 
-        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div></div>");
+        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><ul id='donate' class='stats-container'></ul></div>");
         // $('#profile-details').html("<div id='profile-modal' href='#'><h4 class='sub'><span>Email</span></h4><p id='email'></p><h4 class='sub'><span>Address</span></h4><p id='address'></p><h4 class='sub'><span>City, State, Zip</span></h4><p id='city'></p><h4 class='sub'><span>Phone</span></h4><p id='phone'></p><hr/><ul id='donate' class='stats-container'></ul></div>");
 
         $('.profile-username').text(profile.name);
+
+        $('.info .name').text(profile.name);
 
         $('#name').val(profile.name);
         $('#email').val(profile.email);
@@ -128,7 +132,7 @@ function getProfile(){
         $('#city').val(profile.city);
         $('#state').val(profile.state);
         $('#zip').val(profile.zip);
-        $('#phone').val(profile.phone_number);
+        $('#phone_number').val(profile.phone_number)
       },
       error: function (errorResponse) {
         console.log(errorResponse);
