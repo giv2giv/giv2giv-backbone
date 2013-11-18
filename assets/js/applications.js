@@ -12,7 +12,7 @@ function checkSession() {
     $('#main-content h3').html("Featured Endowments");
     getFeaturedEndowments();
 
-    $('#github-issues').append("<li><a href='https://github.com/giv2giv/giv2giv-jquery/issues?state=open' class='stat summary'><span class='digit'><span class='text'>Link to github issue</span></span></a></li>");
+    $('#github-issues').append("<li><a href='https://github.com/giv2giv/giv2giv-jquery/issues?state=open' target='_blank' class='stat summary'><span class='digit'><span class='text'>Link to github issue</span></span></a></li>");
     $('.inner-nav').append("<li><a href='login.html'><i class='icol-key'></i> Login</a></li>");
 
   } else{
@@ -23,7 +23,7 @@ function checkSession() {
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
     $('.name').text(name);
-    $('.inner-nav').append("<li class='donor_profile'><a href='#'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li class='active'><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
+    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li class='active'><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
 
     if ((localStorage.data_endowment !== undefined) && (localStorage.charity_id !== undefined) && (localStorage.session !== undefined)) {
       createEndowment();
@@ -60,7 +60,9 @@ function getProfile(){
 
         var profile = JSON.parse(localStorage.profile)[0]['donor'];
 
-        $('.donor_profile').html("<a id='button-profile-"+ profile.id +"' href='#' onclick='detailProfile("+ profile.id +");'><i class='icol-user'></i> Donor Profile</a>");
+        $('.donor_profile').html("<a id='button-profile-"+ profile.id +"' onclick='detailProfile("+ profile.id +");'><i class='icol-user'></i> Donor Profile</a>");
+
+        $('#button-profile-'+ profile.id).click();
 
         $('#profile-details').html("<div id='profile-modal' href='#'><h4 class='sub'><span>Email</span></h4><p id='email'></p><h4 class='sub'><span>Address</span></h4><p id='address'></p><h4 class='sub'><span>City, State, Zip</span></h4><p id='city'></p><h4 class='sub'><span>Phone</span></h4><p id='phone'></p><hr/><ul id='donate' class='stats-container'></ul></div>");
 
@@ -82,17 +84,6 @@ function getProfile(){
 
 function detailProfile(id) {
   var demos = {
-    basicDialog: function( target, trigger ) {
-      target.dialog({
-        autoOpen: false
-      });
-
-      trigger.on('click', function(e) {
-        target.dialog( 'open' );
-        e.preventDefault();
-      });
-    },
-
     modalDialog: function( target, trigger ) {
       target.dialog({
         autoOpen: false,
@@ -576,17 +567,6 @@ function addToEndowmentList(source) {
 
 function detailEndowment(id) {
   var demos = {
-    basicDialog: function( target, trigger ) {
-      target.dialog({
-        autoOpen: false
-      });
-
-      trigger.on('click', function(e) {
-        target.dialog( 'open' );
-        e.preventDefault();
-      });
-    },
-
     modalDialog: function( target, trigger ) {
       target.dialog({
         autoOpen: false,
