@@ -24,7 +24,7 @@ function checkSession() {
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
     $('.name').text(name);
-    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li class='active'><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
+    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
 
     if ((localStorage.data_endowment !== undefined) && (localStorage.charity_id !== undefined) && (localStorage.session !== undefined)) {
       createEndowment();
@@ -42,6 +42,58 @@ function checkSessionIndex() {
   if (localStorage.getItem("session") !== null){
     goToDashboard();
   }
+}
+
+function updateProfile(){
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var donors = new Backbone.Collection;
+  donors.url = window.serverUrl + 'api/donors.json';
+
+  data = {
+    donor: {
+     name: $('#name').val(),
+     address: $('#address').val(),
+     city: $('#city').val(),
+     state: $('#state').val(),
+     zip: $('#zip').val(),
+     phone_number: $('#phone_number').val()
+   }
+ }
+
+ $('#loader-profile').show();
+ donors.fetch({
+  headers: {'Authorization' :'Token token=' + token},
+  data: data,
+  type: "PUT",
+  success: function(response,xhr) {
+    localStorage.setItem('profile', JSON.stringify(response));
+    $('#loader-profile').hide();
+
+    var profile = JSON.parse(localStorage.profile)[0]['donor'];
+
+    $('#name').val(profile.name);
+    $('#address').val(profile.address);
+    $('#city').val(profile.city);
+    $('#state').val(profile.state);
+    $('#zip').val(profile.zip);
+    $('#phone_number').val(profile.phone_number);
+    $('.info .name').text(profile.name)
+
+    $.pnotify({
+      title: 'Yeah',
+      text: "Successfully to update donor profile.",
+      type: 'success'
+    });
+
+    $('#loader-profile').hide();
+    getProfile();
+  },
+  error: function (errorResponse, responseText) {
+    console.log(errorResponse);
+    console.log(responseText);
+  }
+});
 }
 
 function getProfile(){
@@ -65,15 +117,18 @@ function getProfile(){
 
         $('#button-profile-'+ profile.id).click();
 
-        $('#profile-details').html("<div id='profile-modal' href='#'><h4 class='sub'><span>Email</span></h4><p id='email'></p><h4 class='sub'><span>Address</span></h4><p id='address'></p><h4 class='sub'><span>City, State, Zip</span></h4><p id='city'></p><h4 class='sub'><span>Phone</span></h4><p id='phone'></p><hr/><ul id='donate' class='stats-container'></ul></div>");
+        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div></div>");
+        // $('#profile-details').html("<div id='profile-modal' href='#'><h4 class='sub'><span>Email</span></h4><p id='email'></p><h4 class='sub'><span>Address</span></h4><p id='address'></p><h4 class='sub'><span>City, State, Zip</span></h4><p id='city'></p><h4 class='sub'><span>Phone</span></h4><p id='phone'></p><hr/><ul id='donate' class='stats-container'></ul></div>");
 
         $('.profile-username').text(profile.name);
-        $('#email').text(profile.email);
-        if(profile.city || profile.state || profile.zip || profile.address || profile.phone_number) {
-          $('#address').text(profile.address);
-          $('#city').text(profile.city + ", " + profile.state + ", " + profile.zip);
-          $('#phone').text(profile.phone_number);
-        }
+
+        $('#name').val(profile.name);
+        $('#email').val(profile.email);
+        $('#address').val(profile.address);
+        $('#city').val(profile.city);
+        $('#state').val(profile.state);
+        $('#zip').val(profile.zip);
+        $('#phone').val(profile.phone_number);
       },
       error: function (errorResponse) {
         console.log(errorResponse);
