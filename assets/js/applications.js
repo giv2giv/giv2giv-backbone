@@ -71,7 +71,7 @@ function updateProfile(){
 
   data = {
     donor: {
-     name: $('#name').val(),
+     name: $('#profile-name').val(),
      address: $('#address').val(),
      city: $('#city').val(),
      state: $('#state').val(),
@@ -106,7 +106,9 @@ function updateProfile(){
     });
 
     $('#loader-profile').hide();
-    $('#profile-modal').dialog('close');
+    // $('#profile-modal').dialog('close');
+    $('#profile-modal').remove();
+    // $('.ui-icon-closethick').click();
     getProfile();
     checkPaymentAccount();
   },
