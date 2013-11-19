@@ -10,7 +10,6 @@ $(document).ready(function() {
   // });
 
 $("#description").keyup(function(event){
-  console.log(event.keyCode);
   event.preventDefault();
   if(event.keyCode == 13){
     $(".endowment-first-step").click();
@@ -18,10 +17,10 @@ $("#description").keyup(function(event){
 });
 
 $("#wizard-demo-2").submit(function(event){
- event.preventDefault();
- if(event.keyCode == 13){
-   $(".endowment-first-step").click();
- }
+  event.preventDefault();
+  if(event.keyCode == 13){
+    $(".endowment-first-step").click();
+  }
 });
 });
 
