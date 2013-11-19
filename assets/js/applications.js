@@ -4,13 +4,25 @@ window.serverUrl = "http://localhost:3000/";
 // window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
-  $("#description").keyup(function(event){
-    console.log(event.keyCode);
-    if(event.keyCode == 13){
-      $(".endowment-first-step").click();
-      event.preventDefault();
-    }
-  });
+  // $('#charities-endowment').tagit({
+  //   maxTags: 3,
+  //   trigerKeys: ['enter', 'comma', 'tab']
+  // });
+
+$("#description").keyup(function(event){
+  console.log(event.keyCode);
+  event.preventDefault();
+  if(event.keyCode == 13){
+    $(".endowment-first-step").click();
+  }
+});
+
+$("#wizard-demo-2").submit(function(event){
+ event.preventDefault();
+ if(event.keyCode == 13){
+   $(".endowment-first-step").click();
+ }
+});
 });
 
 function checkSession() {
@@ -30,7 +42,7 @@ function checkSession() {
 
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
-    $('.name').text(name);
+    $('.info .name').text(name);
     $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='statement.html'><i class='icol-blog'></i> Statement</a></li><li><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
 
     if ((localStorage.data_endowment !== undefined) && (localStorage.charity_id !== undefined) && (localStorage.session !== undefined)) {
@@ -79,7 +91,7 @@ function updateProfile(){
 
     var profile = JSON.parse(localStorage.profile)[0]['donor'];
 
-    $('#name').val(profile.name);
+    $('#profile-name').val(profile.name);
     $('#address').val(profile.address);
     $('#city').val(profile.city);
     $('#state').val(profile.state);
@@ -126,14 +138,14 @@ function getProfile(){
 
         $('#button-profile-'+ profile.id).click();
 
-        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><ul id='donate' class='stats-container'></ul></div>");
+        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='profile-name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><ul id='donate' class='stats-container'></ul></div>");
         // $('#profile-details').html("<div id='profile-modal' href='#'><h4 class='sub'><span>Email</span></h4><p id='email'></p><h4 class='sub'><span>Address</span></h4><p id='address'></p><h4 class='sub'><span>City, State, Zip</span></h4><p id='city'></p><h4 class='sub'><span>Phone</span></h4><p id='phone'></p><hr/><ul id='donate' class='stats-container'></ul></div>");
 
         $('.profile-username').text(profile.name);
 
         $('.info .name').text(profile.name);
 
-        $('#name').val(profile.name);
+        $('#profile-name').val(profile.name);
         $('#email').val(profile.email);
         $('#address').val(profile.address);
         $('#city').val(profile.city);
@@ -582,9 +594,9 @@ function getEndowments(container) {
     headers: {'Authorization' :'Token token=' + token},
     success: function(response, xhr) {
       console.log(response);
-      window.mpit = JSON.stringify(response);
+      window.endowments = JSON.stringify(response);
       $('#loader').hide();
-      if (JSON.parse(window.mpit).length == 0) {
+      if (JSON.parse(window.endowments).length == 0) {
         container.append("<li><a href='#' class='stat summary'><span class='digit'><span class='text'>No Subscribed Endowment</span></span></a></li>");
       } else {
         addToEndowmentList(JSON.stringify(response), container);
@@ -626,24 +638,21 @@ function addToEndowmentList(source, container) {
       if (localStorage.session == null) {
         getDetailEndowment(val.endowment.id);
         if (localStorage.endowment_details !== undefined) {
-          var enDetails = JSON.parse(localStorage.endowment_details)[0];
-          if (enDetails.my_balances !== undefined) {
-            $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br /><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><div id='member_charities-"+ val.endowment.id +"'></div><br/><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></div>");
-          }
-
-          memberCharityEndowment(enDetails.endowment.endowment.charities, val.endowment.id);
-
+          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br /></div>");
         }
-
-        // $('#endowment-details').append("<ul style='text-align: left;' id='dialog-modal-"+ val.endowment['id'] +"' class='stats-container'><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Description</span>"+ val.endowment['description'] +"</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Current Balance</span>balance</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Minimum Donation Amount</span>"+ val.endowment['minimum_donation_amount'] +"</span></a></li><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></ul>");
       } else {
-        $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br /></div>");
+        var enDetails = JSON.parse(localStorage.endowment_details)[0];
+        if (enDetails.my_balances !== undefined) {
+          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br /><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><div id='member_charities-"+ val.endowment.id +"'></div><br/><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></div>");
+        }
+        memberCharityEndowment(enDetails.endowment.endowment.charities, val.endowment.id);
       }
     }
   });
 }
 
 function memberCharityEndowment(data, id) {
+  console.log(data);
   if (data.length == 0) {
     $('#member_charities-' + id).html("No Member Charities");
   } else {
