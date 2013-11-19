@@ -4,6 +4,13 @@ window.serverUrl = "http://localhost:3000/";
 // window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
+  $("#description").keyup(function(event){
+    console.log(event.keyCode);
+    if(event.keyCode == 13){
+      $(".endowment-first-step").click();
+      event.preventDefault();
+    }
+  });
 });
 
 function checkSession() {
@@ -24,7 +31,7 @@ function checkSession() {
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
     $('.name').text(name);
-    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-user'></i> Statement</a></li><li><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
+    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='statement.html'><i class='icol-blog'></i> Statement</a></li><li><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
 
     if ((localStorage.data_endowment !== undefined) && (localStorage.charity_id !== undefined) && (localStorage.session !== undefined)) {
       createEndowment();
@@ -200,7 +207,7 @@ function getBalanceInformation() {
         var fund = JSON.parse(localStorage.fund);
 
         // localStorage.setItem('funds', response)
-        $('.fund-info').append("<p>My Total Fund : "+ fund[0].donor_current_balance +"</p><p>Giv2Giv Total Fund : </p>")
+        $('.fund-info').append("<p>My Total Fund : "+ fund[0].donor_current_balance +"</p><p>Giv2Giv Total Fund : "+ fund[0].giv2giv_current_balance +"</p>")
       },
       error: function (errorResponse) {
         console.log(errorResponse);
@@ -544,6 +551,8 @@ function creatingEndowment(data, token) {
 
 function addCharityToGroup(endowment_id, charity_id, token) {
   var endowment_id = endowment_id[0]['endowment']['id'];
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
 
   var charities = new Backbone.Collection;
   charities.url = window.serverUrl + 'api/endowment/' + endowment_id + '/add_charity.json';
@@ -616,9 +625,13 @@ function addToEndowmentList(source, container) {
 
       if (localStorage.session == null) {
         getDetailEndowment(val.endowment.id);
-        var enDetails = JSON.parse(localStorage.endowment_details)[0];
+        if (localStorage.endowment_details !== undefined) {
+          var enDetails = JSON.parse(localStorage.endowment_details)[0];
+          if (enDetails.my_balances !== undefined) {
+            $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br /><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/><p>giv2giv Donations: <b>"+ enDetails.my_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.my_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.my_balances.endowment_balance +"</b></p><br/><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></div>");
+          }
+        }
 
-        $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br /><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_balance_pre_investment +"</b></p><br/><p>giv2giv Donations: <b>"+ '-' +"</b></p><p>giv2giv Grants: <b>"+ '-' +"</b></p><p>giv2giv Balance: <b>"+ '-' +"</b></p><br/><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></div>");
 
         // $('#endowment-details').append("<ul style='text-align: left;' id='dialog-modal-"+ val.endowment['id'] +"' class='stats-container'><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Description</span>"+ val.endowment['description'] +"</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Current Balance</span>balance</span></a></li><li><a href='#' class='stat summary'><span class='icon icon-circle bg-orange'><i class='icon-user'></i></span><span class='digit'><span class='text'>Minimum Donation Amount</span>"+ val.endowment['minimum_donation_amount'] +"</span></a></li><hr/><a class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a></ul>");
       } else {
@@ -670,6 +683,7 @@ function getDetailEndowment(id) {
       // $('#minimum_donation_amount').text(endowment[0]['endowment'].city + ", " + endowment[0]['endowment'].state + ", " + endowment[0]['endowment'].zip);
     },
     error: function (errorResponse, response) {
+      localStorage.setItem('endowment_details', "");
       console.log(errorResponse);
       console.log(response);
     }
