@@ -4,24 +4,7 @@ window.serverUrl = "http://localhost:3000/";
 // window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
-  // $('#charities-endowment').tagit({
-  //   maxTags: 3,
-  //   trigerKeys: ['enter', 'comma', 'tab']
-  // });
 
-$("#description").keyup(function(event){
-  event.preventDefault();
-  if(event.keyCode == 13){
-    $(".endowment-first-step").click();
-  }
-});
-
-$("#wizard-demo-2").submit(function(event){
-  event.preventDefault();
-  if(event.keyCode == 13){
-    $(".endowment-first-step").click();
-  }
-});
 });
 
 function checkSession() {
@@ -111,9 +94,8 @@ function updateProfile(){
     getProfile();
     checkPaymentAccount();
   },
-  error: function (errorResponse, responseText) {
+  error: function (errorResponse) {
     console.log(errorResponse);
-    console.log(responseText);
   }
 });
 }
@@ -130,7 +112,7 @@ function getProfile(){
     accounts.fetch({
       headers: {'Authorization' :'Token token=' + token},
       success: function(response,xhr) {
-        console.log(response);
+        // console.log(response);
         localStorage.setItem('profile', JSON.stringify(response));
 
         var profile = JSON.parse(localStorage.profile)[0]['donor'];
@@ -194,7 +176,6 @@ function endowmentDetails(){
     data: { id: endowment_id, charity_id: charity_id.toString() },
     type: "POST",
     success: function(response, xhr) {
-      console.log(response);
       $('.form-actions').find('button:contains(Next)').click();
     },
     error: function (errorResponse) {
@@ -238,7 +219,6 @@ function signIn(){
     data: data,
     type: "POST",
     success: function(response, xhr) {
-      console.log(response);
       localStorage.setItem('session', JSON.stringify(response));
       if (localStorage.idEndowment) {
         redirect("donate.html")
@@ -276,7 +256,6 @@ function signUp(){
     data: data,
     type: "POST",
     success: function(response,xhr) {
-      console.log(response);
       localStorage.setItem('session', JSON.stringify(response));
 
       var accounts = new Backbone.Collection;
@@ -285,7 +264,6 @@ function signUp(){
         data: { email: $('#email').val(), password: $('#password').val() },
         type: "POST",
         success: function(response, xhr) {
-          console.log(response);
           localStorage.setItem('session', JSON.stringify(response));
           redirect("index.html");
         },
@@ -353,9 +331,8 @@ function getCharities() {
       });
       $('#loader').hide();
     },
-    error: function (errorResponse, responseText) {
+    error: function (errorResponse) {
       console.log(errorResponse);
-      console.log(responseText);
     }
   });
 }
@@ -409,9 +386,8 @@ function endowmentFirstStep(){
       addToList(JSON.stringify(window.charities));
       $('#loader').hide();
     },
-    error: function (errorResponse, responseText) {
+    error: function (errorResponse) {
       console.log(errorResponse);
-      console.log(responseText);
     }
   });
 
@@ -447,9 +423,8 @@ function createEndowment(){
         });
 
       },
-      error: function (errorResponse, responseText) {
+      error: function (errorResponse) {
         console.log(errorResponse);
-        console.log(responseText);
       }
     });
 
@@ -524,9 +499,8 @@ function createEndowment(){
               type: 'success'
             });
           },
-          error: function (errorResponse, responseText) {
+          error: function (errorResponse) {
             console.log(errorResponse);
-            console.log(responseText);
           }
         });
 
@@ -555,9 +529,8 @@ function creatingEndowment(data, token) {
       localStorage.setItem('endowment_id', JSON.stringify(response));
       // $('.form-actions').find('button:contains(Next)').click();
     },
-    error: function (errorResponse, responseText) {
+    error: function (errorResponse) {
       console.log(errorResponse);
-      console.log(responseText);
     }
   });
 }
@@ -594,7 +567,6 @@ function getEndowments(container) {
   endowments.fetch({
     headers: {'Authorization' :'Token token=' + token},
     success: function(response, xhr) {
-      console.log(response);
       window.endowments = JSON.stringify(response);
       $('#loader').hide();
       if (JSON.parse(window.endowments).length == 0) {
@@ -653,7 +625,6 @@ function addToEndowmentList(source, container) {
 }
 
 function memberCharityEndowment(data, id) {
-  console.log(data);
   if (data.length == 0) {
     $('#member_charities-' + id).html("No Member Charities");
   } else {
@@ -705,10 +676,9 @@ function getDetailEndowment(id) {
       // $('#current_balance').text("Current Balance");
       // $('#minimum_donation_amount').text(endowment[0]['endowment'].city + ", " + endowment[0]['endowment'].state + ", " + endowment[0]['endowment'].zip);
     },
-    error: function (errorResponse, response) {
+    error: function (errorResponse) {
       localStorage.setItem('endowment_details', "");
       console.log(errorResponse);
-      console.log(response);
     }
   });
 }
@@ -740,9 +710,8 @@ function checkPaymentAccount() {
           }
         }
       },
-      error: function (errorResponse, responseText) {
+      error: function (errorResponse) {
         console.log(errorResponse);
-        console.log(responseText);
       }
     });
 }
@@ -765,7 +734,6 @@ function createPaymentAccount() {
     data: data,
     type: "POST",
     success: function(response, xhr) {
-      console.log(response);
       window.payment_accounts = JSON.stringify(response);
       var payment_accounts = JSON.parse(window.payment_accounts);
       $.pnotify({
@@ -776,9 +744,8 @@ function createPaymentAccount() {
       $('#donate').html("<ul id='donate' class='stats-container'></ul>");
       $('#donate').append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>Stripe</span>"+ response.id +"</span></a></li>");
     },
-    error: function (errorResponse, responseText) {
+    error: function (errorResponse) {
       console.log(errorResponse);
-      console.log(responseText);
     }
   });
 }
