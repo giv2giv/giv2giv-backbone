@@ -15,6 +15,9 @@ function checkSession() {
     $('.inner-nav').append("<li><a href='login.html'><i class='icol-key'></i> Login</a></li>");
 
   } else{
+    // $('#title-featured-endowments').html("Featured Endowments");
+    // getFeaturedEndowments($('#container-featured-endowments'));
+
     $('#header-functions').show();
     $('#title-my-endowments').html("My Endowments");
     $('#title-featured-endowments').html("Featured Endowments");
@@ -622,29 +625,70 @@ function addToEndowmentList(source, container) {
           $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
           memberCharityEndowment(val.endowment.charities, val.endowment.id);
+          checkPaymentAccont(val.endowment.id, enDetails);
 
           // if (localStorage.session == null) {
             // button Donate Now just show for user !session and user.subscription.blank?
             // subscription modal
             // payment account modal
 
-            $('#donation-status-'+val.endowment.id).append("<a id='donor-button-modal-"+ val.endowment.id +"' class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a><br/><br/>");
+
+            // if (window.isDonorHere == true) {
+            //   console.log("pernah donor")
+            //   $('#donation-status-'+val.endowment.id).html("<hr/><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/>");
+            // } else {
+            //   console.log("donor kosong")
+            //   $('#donation-status-'+val.endowment.id).append("<a id='donor-button-modal-"+ val.endowment.id +"' class='btn add-charity' onclick='donateEndowment("+ val.endowment['id'] +");' href='javascript:void(0)'>Donate Now!</a><br/><br/>");
+            // }
 
             $('#donor-button-modal-'+ val.endowment.id).click();
 
             selectPaymentAccount(val.endowment.id);
 
-            $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><a class='btn' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a></form></div>");
+            $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<br /><br /><div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><br /><br /><a class='btn' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a></form></div>");
 
             $('#selected-payment-account-' + val.endowment.id).change(function() {
               window.payment_account_id = $(this).val();
             });
+
+
+
 
           // } else {
           //   $('#donation-status-'+val.endowment.id).append("<hr/><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/>");
           // }
         }
       }
+    }
+  });
+}
+
+function checkPaymentAccont(id, enDetails) {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+
+  var payment_accounts = new Backbone.Collection;
+  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/all_donation_list.json';
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    data: { endowment_id: id },
+    // type: "POST",
+    success: function(response, xhr) {
+      window.response = JSON.parse(JSON.stringify(response));
+      console.log(window.response[0].donations.length)
+      if (window.response[0].donations.length > 0) {
+        $('#donation-status-'+ id).html("<hr/><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/>");
+      } else {
+        $('#donation-status-'+ id).append("<a id='donor-button-modal-"+ id +"' class='btn add-charity' onclick='donateEndowment("+ id +");' href='javascript:void(0)'>Donate Now!</a><br/><br/>");
+
+        $('#donor-button-modal-' + id).click();
+      }
+
+      // $('#donation-status-'+val.endowment.id).append("<hr/><p>My Donations: <b>"+ enDetails.my_balances.my_donations_amount +"</b></p><p>My Grants: <b>"+ enDetails.my_balances.my_grants_amount +"</b></p><p>My Balance: <b>"+ enDetails.my_balances.my_endowment_balance +"</b></p><br/>");
+    },
+    error: function (errorResponse) {
+      window.errorResponse = console.log(errorResponse);
     }
   });
 }
@@ -666,9 +710,6 @@ function donateSubscription(id) {
       data: data,
       type: "POST",
       success: function(response, xhr) {
-        window.mpit = JSON.stringify(response);
-        var response = JSON.parse(window.mpit);
-
         if (response[0].message == "Success") {
           $('#donor-modal-' + id).remove()
           $.pnotify({
@@ -700,12 +741,13 @@ function selectPaymentAccount(id) {
       var payment_accounts = JSON.parse(window.payment_accounts);
       if (payment_accounts.length == 0) {
         console.log("xxxxxxxxxxxxxxxx")
-        // $('#select-payment-account-' + id).html("<form class='form-vertical' method='post'><input type='text' placeholder='stripeToken' name='[stripeToken]' id='input-stripe-token' /><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;'>Create Payment Account</button></form>")
+        $('#select-payment-account-' + id).html("");
+        // $('#select-payment-account-' + id).html("<form class='form-vertical' method='post'><input type='text' placeholder='stripeToken' name='[stripeToken]' id='input-stripe-token'><button type='submit' class='btn btn-success' onclick='createPaymentAccount(); return false;'>Create Payment Account</button></form>");
+
       } else{
         $.each(payment_accounts, function(key, val) {
           console.log("yyyyyyyyyyyyyyy")
           // $('#select-payment-account-' + id).append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val['payment_account'].processor + "</span>"+ val['payment_account'].id +"</span></a></li>");
-          // $('#select-payment-account-' + id).html("<select></select>");
           $('#select-payment-account-' + id + '> select').append("<option value='"+ val.payment_account.id +"'>" + val['payment_account'].id + "</option>");
         });
       }
