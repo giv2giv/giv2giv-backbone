@@ -802,7 +802,7 @@ function selectPaymentAccount(id) {
       } else{
         $.each(payment_accounts, function(key, val) {
           // $('#select-payment-account-' + id).append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val['payment_account'].processor + "</span>"+ val['payment_account'].id +"</span></a></li>");
-          $('#select-payment-account-' + id + '> select').append("<option value='"+ val.payment_account.id +"'>" + val['payment_account'].id + "</option>");
+          $('#select-payment-account-' + id + '> select').append("<option value='"+ val.payment_account.id +"'>" + val.payment_account.stripe_cust_id + "</option>");
         });
       }
     },
