@@ -1083,8 +1083,10 @@ function updatePaymentAccount(id) {
               type: 'success'
             });
 
-            var enDetails = JSON.parse(localStorage.endowment_details)[0];
-            checkPaymentAccont(id, enDetails);
+            $('#payment-account-' + id).html("Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("id")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>Payment Updated</div></div>")
+
+            // var enDetails = JSON.parse(localStorage.endowment_details)[0];
+            // checkPaymentAccont(id, enDetails);
           } else {
             $.pnotify({
               title: 'Oops',
@@ -1093,7 +1095,7 @@ function updatePaymentAccount(id) {
             });
           }
 
-          alert("yeyeyeyee");
+
           // window.payment_accounts = JSON.stringify(response);
           // var payment_accounts = JSON.parse(window.payment_accounts);
           // $('#payment-account-form input').val("");
