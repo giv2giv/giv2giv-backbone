@@ -41,6 +41,8 @@ function checkSession() {
     }
     getProfile();
     showAllPaymentAccount();
+    getDonorStatement();
+
     // checkPaymentAccount();
   }
 }
@@ -122,6 +124,7 @@ function getProfile(){
         localStorage.setItem('profile', JSON.stringify(response));
 
         var profile = JSON.parse(localStorage.profile)[0]['donor'];
+        window.profile = JSON.parse(localStorage.profile)[0]['donor'];
 
         $('.donor_profile').html("<a id='button-profile-"+ profile.id +"' onclick='detailProfile("+ profile.id +");'><i class='icol-user'></i> Donor Profile</a>");
 
@@ -147,6 +150,10 @@ function getProfile(){
       }
     });
 }
+}
+
+function getDonorStatement() {
+  // body...
 }
 
 function detailProfile(id) {
@@ -650,6 +657,9 @@ function addToEndowmentList(source, container) {
             $('#select-payment-account-' + val.endowment.id).html("<form action='' method='POST' id='payment-form-"+ val.endowment.id +"'><span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 50px; width: 55%;' /></div><div class='form-row'><input id='email-"+ val.endowment.id +"' type='text' size='4' value='' placeholder='Email' /></div></form>")
           } else {
             $('#plan-' + val.endowment.id).html("<br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<br />");
+
+            // cek payment account
+
           }
 
           $('#selected-payment-account-' + val.endowment.id).change(function() {
@@ -674,7 +684,6 @@ function checkPaymentAccont(id, enDetails) {
     // type: "POST",
     success: function(response, xhr) {
       window.response = JSON.parse(JSON.stringify(response));
-      console.log(window.response[0].donations.length)
       if (window.response[0].donations.length == 0) {
         $('#donation-status-'+ id).append("<a id='donor-button-modal-"+ id +"' class='btn add-charity' onclick='donateEndowment("+ id +");' href='javascript:void(0)'>Donate Now!</a><br/><br/>");
 
@@ -803,7 +812,13 @@ function selectPaymentAccount(id) {
       window.payment_accounts = JSON.stringify(response);
       var payment_accounts = JSON.parse(window.payment_accounts);
       if (payment_accounts.length == 0) {
-        $('#select-payment-account-' + id).html("");
+        // var profile = JSON.parse(localStorage.profile)[0]['donor'];
+        // $('#select-payment-account-' + id).html("<a id='button-profile-"+ profile.id +"' onclick='detailProfile("+ profile.id +");'> Add Payment Account</a>");
+        // $('#select-payment-account-' + id).html("Add Payment Account");
+        // getProfile();
+
+        // $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='profile-name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><div id='payment-accounts'></div><ul id='donate' class='stats-container'></ul></div>");
+
         // $('#select-payment-account-' + id).html("<form class='form-vertical' method='post'><input type='text' placeholder='stripeToken' name='[stripeToken]' id='input-stripe-token'><button type='submit' class='btn btn-success' onclick='createPaymentAccount(); return false;'>Create Payment Account</button></form>");
 
       } else{
@@ -819,8 +834,21 @@ function selectPaymentAccount(id) {
   });
 }
 
+function openProfileForm() {
+  $('#profile-modal').dialog();
+}
+
 function donateEndowment(id) {
   localStorage.setItem('idEndowment', id);
+  // getProfile();
+
+  // $('#select-payment-account-' + localStorage.idEndowment).html("<a class='btn' id='button-profile-"+ window.profile.id +"' onclick='"+  $('#profile-modal').dialog() +"'> Add Payment Account</a>");
+  if ((JSON.parse(window.payment_accounts).length == 0)) {
+    $('#select-payment-account-' + localStorage.idEndowment).html("<a class='btn' id='button-profile-"+ window.profile.id +"' onclick='openProfileForm();'> Add Payment Account</a>");
+  };
+
+  // $('#button-profile-'+ window.profile.id)
+  // detailProfile(window.profile.id);
 
   var demos = {
     modalDialog: function( target, trigger ) {
@@ -875,7 +903,7 @@ function detailEndowment(id) {
   }
 
   // $('#dialog-modal-'+id).dialog( 'open' );
-  // localStorage.setItem('idEndowment', id);
+  localStorage.setItem('idEndowment', id);
   // redirect("endowment_details.html");
 }
 
@@ -907,7 +935,6 @@ function showAllPaymentAccount() {
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
     success: function(response, xhr) {
-      // alert("iiiiiiiiiiiiiiiiiiii");
       $('#payment-accounts').html("<form action='' method='POST' id='payment-account-form'><span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 37px; width: 58%;'/></div><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;' style='width: 86%;'>Create Payment Account</button></form><br /><br />");
 
       window.payment_accounts = JSON.stringify(response);
