@@ -9,10 +9,16 @@ $(document).ready(function() {
 function checkSession() {
   if(localStorage.session == null){
     $('#header-functions').hide();
+    $('#title-my-endowments').html("");
+
+    $('#container-my-endowments').html("");
+    $('#container-featured-endowments').html("");
+
     $('#title-featured-endowments').html("Featured Endowments");
     getFeaturedEndowments($('#container-featured-endowments'));
 
-    $('.inner-nav').append("<li><a href='login.html'><i class='icol-key'></i> Login</a></li>");
+    $('.inner-nav').html("");
+    $('.inner-nav').append("<li class='active'><a href='index.html'><i class='icol-dashboard'></i> Dashboard</a></li><li><a href='login.html'><i class='icol-key'></i> Login</a></li>");
 
   } else{
     $('#header-functions').show();
@@ -294,8 +300,11 @@ function signOut(){
     headers: {'Authorization' :'Token token=' + token},
     type: "POST",
     success: function(response, xhr) {
+      window.mpit = JSON.parse(JSON.stringify(response));
       localStorage.clear();
-      redirect("index.html");
+      checkSession();
+      getBalanceInformation();
+      // redirect("index.html");
     },
     error: function (errorResponse) {
       console.log(errorResponse)
@@ -616,11 +625,11 @@ function addToEndowmentList(source, container) {
 
           if (localStorage.session !== undefined) {
             checkPaymentAccont(val.endowment.id, enDetails);
+            selectPaymentAccount(val.endowment.id);
           };
 
           $('#donor-button-modal-'+ val.endowment.id).click();
 
-          selectPaymentAccount(val.endowment.id);
 
           $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<br /><br /><div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><br /><br /><a class='btn' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a></form><div id='loader-donate' style='display: none; float: right;'><img src='assets/images/preloaders/8.gif' alt=''></div></div>");
 
