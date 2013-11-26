@@ -40,7 +40,8 @@ function checkSession() {
       localStorage.removeItem('endowment_id');
     }
     getProfile();
-    checkPaymentAccount();
+    showAllPaymentAccount();
+    // checkPaymentAccount();
   }
 }
 
@@ -96,7 +97,8 @@ function updateProfile(){
       $('#profile-modal').remove();
 
       getProfile();
-      checkPaymentAccount();
+      // checkPaymentAccount();
+      showAllPaymentAccount();
     },
     error: function (errorResponse) {
       console.log(errorResponse);
@@ -125,7 +127,7 @@ function getProfile(){
 
         $('#button-profile-'+ profile.id).click();
 
-        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='profile-name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><ul id='donate' class='stats-container'></ul></div>");
+        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='profile-name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><div id='payment-accounts'></div><ul id='donate' class='stats-container'></ul></div>");
 
         $('.profile-username').text(profile.name);
 
@@ -728,7 +730,6 @@ function donateSubscription(id) {
     Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
 
     var stripeResponseHandler = function(status, response) {
-      console.log("Dsdsada")
       var $form = $('#payment-form-' + id);
 
       if (response.error) {
@@ -889,6 +890,54 @@ function getDetailEndowment(id) {
   });
 }
 
+function showAllPaymentAccount() {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  var payment_accounts = new Backbone.Collection;
+  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response, xhr) {
+      $('#payment-accounts').html("<form action='' method='POST' id='payment-account-form'><span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 37px; width: 58%;' /></div><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;' style='width: 86%;'>Create Payment Account</button></form><br /><br />");
+
+      window.payment_accounts = JSON.stringify(response);
+      var payment_accounts = JSON.parse(window.payment_accounts);
+      $('#payment-accounts').append("<ul style='list-style: none; margin: auto;'></ul>");
+      $.each(payment_accounts, function(key, val) {
+        $('#payment-accounts ul').append("<li id='payment-account-"+ val.payment_account.id +"'>Payment Account "+ (key+1) + "<span><a onclick='destroyPaymentAccount("+ val.payment_account.id +")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>" + val.payment_account.processor + " - " + val.payment_account.stripe_cust_id +"</div></div></li><br />");
+      });
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
+function destroyPaymentAccount(id) {
+  var payment_accounts = new Backbone.Collection;
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/'+ id +'.json';
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    method: "DELETE",
+    success: function(response, xhr) {
+      $('#payment-account-'+id).remove();
+
+      $.pnotify({
+        title: 'Yeah',
+        text: "Successfully remove payment account.",
+        type: 'success'
+      });
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse)
+    }
+  });
+}
+
 function checkPaymentAccount() {
   if (localStorage.session == null) {
     redirect("login.html");
@@ -909,7 +958,7 @@ function checkPaymentAccount() {
           var str = window.location.pathname;
           if (str.indexOf("index") !== -1) {
             $.each(payment_accounts, function(key, val) {
-              $('#donate').append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val['payment_account'].processor + "</span>"+ val['payment_account'].id +"</span></a></li>");
+              $('#donate').html("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val['payment_account'].processor + "</span>"+ val['payment_account'].id +"</span></a></li>");
             });
           } else {
             $('#donate').text("Form Donate")
@@ -924,37 +973,57 @@ function checkPaymentAccount() {
 }
 
 function createPaymentAccount() {
-  var session = JSON.parse(localStorage.session);
-  var token = session[0]['session']['session'].token;
-  var payment_accounts = new Backbone.Collection;
-  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
+  Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
+  var $form = $('#payment-account-form');
 
-  var stripe_token = $('#input-stripe-token').val();
-  var data = {
-    processor: "stripe",
-    stripeToken: stripe_token
-  }
+  var stripeResponseHandler = function(status, response) {
+    if (response.error) {
+      $form.find('.payment-errors').text(response.error.message);
+      $form.find('button').prop('disabled', false);
+    } else {
+      var stripe_token = response.id;
+      $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+      $form.find('.payment-errors').text(token);
 
-  payment_accounts.fetch({
-    headers: {'Authorization' :'Token token=' + token},
-    data: data,
-    type: "POST",
-    success: function(response, xhr) {
-      window.payment_accounts = JSON.stringify(response);
-      var payment_accounts = JSON.parse(window.payment_accounts);
-      $.pnotify({
-        title: 'Yeah',
-        text: "Successfully create payment account.",
-        type: 'success'
-      });
+      var session = JSON.parse(localStorage.session);
+      var token = session[0]['session']['session'].token;
+      var payment_accounts = new Backbone.Collection;
+      payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
 
-      $('#donate').html("<ul id='donate' class='stats-container'></ul>");
-      $('#donate').append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>Stripe</span>"+ response.id +"</span></a></li>");
+      var data = {
+        processor: "stripe",
+        stripeToken: stripe_token
+      }
+
+      payment_accounts.fetch({
+        headers: {'Authorization' :'Token token=' + token},
+        data: data,
+        type: "POST",
+        success: function(response, xhr) {
+          window.payment_accounts = JSON.stringify(response);
+          var payment_accounts = JSON.parse(window.payment_accounts);
+          $('#payment-account-form input').val("");
+
+          $.pnotify({
+            title: 'Yeah',
+            text: "Successfully create payment account.",
+            type: 'success'
+          });
+
+          var payment_account = payment_accounts[0].payment_account;
+
+          $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
+          // $.each(payment_accounts, function(key, val) {
+          // });
     },
     error: function (errorResponse) {
       console.log(errorResponse);
     }
   });
+}
+};
+
+Stripe.createToken($form, stripeResponseHandler);
 }
 
 function searchCharities() {
