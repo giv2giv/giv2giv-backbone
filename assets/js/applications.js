@@ -157,6 +157,10 @@ function detailProfile(id) {
         modal: true
       });
 
+      if (($('#payment-account-form').size() == 0)) {
+        showAllPaymentAccount();
+      }
+
       trigger.on('click', function(e) {
         target.dialog( 'open' );
         e.preventDefault();
@@ -404,85 +408,87 @@ function createEndowment(){
     var token = session[0]['session']['session'].token;
     var charity_id = JSON.parse(localStorage.charity_id);
 
-  // creatingEndowment(JSON.parse(localStorage.data_endowment), token);
-  var endowments = new Backbone.Collection;
-  endowments.url = window.serverUrl + 'api/endowment.json';
+    // creatingEndowment(JSON.parse(localStorage.data_endowment), token);
+    var endowments = new Backbone.Collection;
+    endowments.url = window.serverUrl + 'api/endowment.json';
 
-  $('#loader').show();
-  endowments.fetch({
-    headers: {'Authorization' :'Token token=' + token},
-    data: JSON.parse(localStorage.data_endowment),
-    type: "POST",
-    success: function(response,xhr) {
-      $('#loader').hide();
-      localStorage.setItem('endowment_id', JSON.stringify(response));
+    $('#loader').show();
+    endowments.fetch({
+      headers: {'Authorization' :'Token token=' + token},
+      data: JSON.parse(localStorage.data_endowment),
+      type: "POST",
+      success: function(response,xhr) {
+        $('#loader').hide();
+        localStorage.setItem('endowment_id', JSON.stringify(response));
 
-      var endowment_id = JSON.parse(localStorage.endowment_id);
-      addCharityToGroup(endowment_id, charity_id, token);
+        var endowment_id = JSON.parse(localStorage.endowment_id);
+        addCharityToGroup(endowment_id, charity_id, token);
 
-      $.pnotify({
-        title: 'Yeah',
-        text: "Successfully to create endowment.",
-        type: 'success'
-      });
+        $.pnotify({
+          title: 'Yeah',
+          text: "Successfully to create endowment.",
+          type: 'success'
+        });
 
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
+      },
+      error: function (errorResponse) {
+        console.log(errorResponse);
+      }
+    });
 
-  localStorage.removeItem('charity_id');
-  localStorage.removeItem('data_endowment');
-  localStorage.removeItem('endowment_id');
-} else {
-  var charity_id = new Array;
-  $.each($('.select2-search-choice div'), function(key, val){
-    charity_id.push($(val).attr("value"));
-  })
-  localStorage.setItem('charity_id', JSON.stringify(charity_id));
+    localStorage.removeItem('charity_id');
+    localStorage.removeItem('data_endowment');
+    localStorage.removeItem('endowment_id');
+  } else {
+    var charity_id = new Array;
+    $.each($('.select2-search-choice div'), function(key, val){
+      charity_id.push($(val).attr("value"));
+    })
+    localStorage.setItem('charity_id', JSON.stringify(charity_id));
 
 
-  if (!$(".form-endowment").valid()) return;
-  $("input.add-charity").val("LOADING..");
+    if (!$(".form-endowment").valid()) return;
+    $("input.add-charity").val("LOADING..");
 
-  var name = $('#name').val();
-  var minimum_donation_amount = $('#minimum_donation_amount').val();
-  var val1 = $("#public").is(":checked");
-  var endowment_visibility = (val1 == true ? "public" : "private");
-  var description = $('#description').val();
+    var name = $('#name').val();
+    var minimum_donation_amount = $('#minimum_donation_amount').val();
+    var val1 = $("#public").is(":checked");
+    var endowment_visibility = (val1 == true ? "public" : "private");
+    var description = $('#description').val();
 
-  var data = {
-    name: name,
-    minimum_donation_amount: minimum_donation_amount,
-    endowment_visibility: endowment_visibility,
-    description: description
-  };
+    var data = {
+      name: name,
+      minimum_donation_amount: minimum_donation_amount,
+      endowment_visibility: endowment_visibility,
+      description: description
+    };
 
-  localStorage.setItem('data_endowment', JSON.stringify(data));
+    localStorage.setItem('data_endowment', JSON.stringify(data));
 
-  if(localStorage.session == null){
-    if (charity_id.length == 0) {
-      $.pnotify({
-        title: 'Oops!',
-        text: "Please select charities first.",
-        type: 'error'
-      });
-    } else {
-      redirect("login.html");
-    }
-  } else{
-    var session = JSON.parse(localStorage.session);
-    var token = session[0]['session']['session'].token;
-    var charity_id = JSON.parse(localStorage.charity_id);
+    if(localStorage.session == null){
+      console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+      if (charity_id.length == 0) {
+        $.pnotify({
+          title: 'Oops!',
+          text: "Please select charities first.",
+          type: 'error'
+        });
+      } else {
+        redirect("login.html");
+      }
+    } else{
+      var session = JSON.parse(localStorage.session);
+      var token = session[0]['session']['session'].token;
+      var charity_id = JSON.parse(localStorage.charity_id);
+      console.log("///////////////////////////////////////////")
 
-    if (charity_id.length == 0) {
-      $.pnotify({
-        title: 'Oops!',
-        text: "Please select charities first.",
-        type: 'error'
-      });
-    } else {
+      if (charity_id.length == 0) {
+        $.pnotify({
+          title: 'Oops!',
+          text: "Please select charities first.",
+          type: 'error'
+        });
+      } else {
         // creatingEndowment(JSON.parse(localStorage.data_endowment), token);
         var endowments = new Backbone.Collection;
         endowments.url = window.serverUrl + 'api/endowment.json';
@@ -494,6 +500,7 @@ function createEndowment(){
           type: "POST",
           success: function(response,xhr) {
             $('#loader').hide();
+            console.log("*********************************************")
             localStorage.setItem('endowment_id', JSON.stringify(response));
             $('.form-actions').find('button:contains(Next)').click();
 
@@ -896,22 +903,33 @@ function showAllPaymentAccount() {
   var payment_accounts = new Backbone.Collection;
   payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
 
+
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
     success: function(response, xhr) {
-      $('#payment-accounts').html("<form action='' method='POST' id='payment-account-form'><span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 37px; width: 58%;' /></div><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;' style='width: 86%;'>Create Payment Account</button></form><br /><br />");
+      // alert("iiiiiiiiiiiiiiiiiiii");
+      $('#payment-accounts').html("<form action='' method='POST' id='payment-account-form'><span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 37px; width: 58%;'/></div><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;' style='width: 86%;'>Create Payment Account</button></form><br /><br />");
 
       window.payment_accounts = JSON.stringify(response);
       var payment_accounts = JSON.parse(window.payment_accounts);
       $('#payment-accounts').append("<ul style='list-style: none; margin: auto;'></ul>");
       $.each(payment_accounts, function(key, val) {
-        $('#payment-accounts ul').append("<li id='payment-account-"+ val.payment_account.id +"'>Payment Account "+ (key+1) + "<span><a onclick='destroyPaymentAccount("+ val.payment_account.id +")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>" + val.payment_account.processor + " - " + val.payment_account.stripe_cust_id +"</div></div></li><br />");
+        $('#payment-accounts ul').append("<li id='payment-account-"+ val.payment_account.id +"'>Payment Account "+ val.payment_account.id + "<span><a onclick='destroyPaymentAccount("+ val.payment_account.id +")'> [x]</a></span><span><a onclick='editPaymentAccount("+ val.payment_account.id +")'> [edit]</a></span><br /><div style='margin-left: 15px;'><div>" + val.payment_account.processor + " - " + val.payment_account.stripe_cust_id +"</div></div></li><br />");
       });
     },
     error: function (errorResponse) {
       console.log(errorResponse);
+      $.pnotify({
+        title: 'Oops',
+        text: "Unable to fetch data. Please reload this page.",
+        type: 'error'
+      });
     }
   });
+}
+
+function editPaymentAccount(id) {
+  $('#payment-accounts form').html("<span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 37px; width: 58%;' /></div><button type='submit' class='btn btn-success btn-block' onclick='updatePaymentAccount("+ id +"); return false;' style='width: 86%;'>Update Payment Account</button>");
 }
 
 function destroyPaymentAccount(id) {
@@ -1020,6 +1038,79 @@ function createPaymentAccount() {
       console.log(errorResponse);
     }
   });
+}
+};
+
+Stripe.createToken($form, stripeResponseHandler);
+}
+
+function updatePaymentAccount(id) {
+  Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
+  var $form = $('#payment-account-form');
+
+  var stripeResponseHandler = function(status, response) {
+    if (response.error) {
+      $form.find('.payment-errors').text(response.error.message);
+      $form.find('button').prop('disabled', false);
+    } else {
+      var stripe_token = response.id;
+      $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+      $form.find('.payment-errors').text(token);
+
+      var session = JSON.parse(localStorage.session);
+      var token = session[0]['session']['session'].token;
+      var payment_accounts = new Backbone.Collection;
+      payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts.json';
+      payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/' + id + '.json';
+
+      var data = {
+        processor: "stripe",
+        stripeToken: stripe_token
+      }
+
+      payment_accounts.fetch({
+        headers: {'Authorization' :'Token token=' + token},
+        data: data,
+        type: "PUT",
+        success: function(response, xhr) {
+          response = JSON.parse(JSON.stringify(response));
+          if ((response[0].message) == "Success") {
+            $('#donor-modal-' + id).remove()
+            $('#loader-donate').hide();
+            $.pnotify({
+              title: 'Yeah',
+              text: "Successfully update payment account.",
+              type: 'success'
+            });
+
+            var enDetails = JSON.parse(localStorage.endowment_details)[0];
+            checkPaymentAccont(id, enDetails);
+          } else {
+            $.pnotify({
+              title: 'Oops',
+              text: response[0].message,
+              type: 'error'
+            });
+          }
+
+          alert("yeyeyeyee");
+          // window.payment_accounts = JSON.stringify(response);
+          // var payment_accounts = JSON.parse(window.payment_accounts);
+          // $('#payment-account-form input').val("");
+
+          // $.pnotify({
+          //   title: 'Yeah',
+          //   text: "Successfully update payment account.",
+          //   type: 'success'
+          // });
+
+          // var payment_account = payment_accounts[0].payment_account;
+          // $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
+        },
+        error: function (errorResponse) {
+          console.log(errorResponse);
+        }
+      });
 }
 };
 
