@@ -940,20 +940,22 @@ function destroyPaymentAccount(id) {
 
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
-    method: "DELETE",
+    type: "DELETE",
+    contentType: "application/json",
     success: function(response, xhr) {
-      $('#payment-account-'+id).remove();
 
-      $.pnotify({
-        title: 'Yeah',
-        text: "Successfully remove payment account.",
-        type: 'success'
-      });
     },
     error: function (errorResponse) {
       console.log(errorResponse)
     }
   });
+
+  $.pnotify({
+    title: 'Yeah',
+    text: "Successfully remove payment account.",
+    type: 'success'
+  });
+  $('#payment-account-'+id).remove();
 }
 
 function checkPaymentAccount() {
@@ -1030,14 +1032,14 @@ function createPaymentAccount() {
 
           var payment_account = payment_accounts[0].payment_account;
 
-          $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
+          $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><span><a onclick='editPaymentAccount("+ payment_account.id +")'> [edit]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
           // $.each(payment_accounts, function(key, val) {
           // });
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
+},
+error: function (errorResponse) {
+  console.log(errorResponse);
+}
+});
 }
 };
 
@@ -1083,7 +1085,7 @@ function updatePaymentAccount(id) {
               type: 'success'
             });
 
-            $('#payment-account-' + id).html("Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("id")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>Payment Updated</div></div>")
+            $('#payment-account-' + id).html("Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount(id)'> [x]</a></span><br /><div style='margin-left: 15px;'><div>Payment Updated</div></div>");
 
             // var enDetails = JSON.parse(localStorage.endowment_details)[0];
             // checkPaymentAccont(id, enDetails);
