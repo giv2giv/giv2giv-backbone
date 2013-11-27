@@ -1,6 +1,7 @@
 window.indexUrl = "http://localhost/giv2giv-jquery/";
 // window.indexUrl = "http://www.giv2giv.org/giv2giv-jquery/";
 window.serverUrl = "http://localhost:3000/";
+window.stripePublishKey = "pk_test_ys65GDVxkAM0Ej8fwpDItB2s"
 // window.serverUrl = "https://api.giv2giv.org/";
 
 $(document).ready(function() {
@@ -153,7 +154,60 @@ function getProfile(){
 }
 
 function getDonorStatement() {
-  // body...
+  //mpit
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+
+  var payment_accounts = new Backbone.Collection;
+  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/all_donation_list.json';
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response,xhr) {
+      var profile = JSON.parse(localStorage.profile)[0]['donor'];
+      var response = JSON.parse(JSON.stringify(response));
+      // localStorage.setItem('profile', JSON.stringify(response));
+      // detailStatement(profile.id);
+
+      $('.statement').html("<a id='button-statement-"+ profile.id +"' onclick='detailStatement("+ profile.id +");'><i class='icol-blog'></i> Statement</a>");
+
+      $('#button-statement-'+ profile.id).click();
+
+      $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'><li>Donations To: Endowment Name<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+
+      $.each(response, function(key, val) {
+        var val = val[0];
+        // var endowment = getEndowentById(val.donor_subscription.endowment_id);
+        if (val !== undefined) {
+          var endowment = getDetailEndowment(val.donor_subscription.endowment_id);
+          var enDetails = JSON.parse(localStorage.endowment_details)[0];
+          $('#donation-container').append("<li>Donations To: "+ enDetails.name + "<br /><div style='margin-left: 15px;'><div style='float: left;'>Name: </div><div style='margin-left: 45px;'>" + val.donor_subscription +"</div></div></li><br />");
+        }
+      })
+
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
+}
+
+function getEndowentById(id) {
+  var session = JSON.parse(localStorage.session);
+  var token = session[0]['session']['session'].token;
+
+  var payment_accounts = new Backbone.Collection;
+  payment_accounts.url = window.serverUrl + 'api/endowment/'+ id +'.json';
+
+  payment_accounts.fetch({
+    headers: {'Authorization' :'Token token=' + token},
+    success: function(response, xhr) {
+      window.mpit = JSON.parse(JSON.strigify(response));
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
 }
 
 function detailProfile(id) {
@@ -177,6 +231,28 @@ function detailProfile(id) {
 
   if( $.fn.dialog ) {
     demos.modalDialog( $('#profile-modal'), $('#button-profile-'+id) );
+  }
+}
+
+function detailStatement(id) {
+  var demos = {
+    modalDialog: function( target, trigger ) {
+      target.dialog({
+        autoOpen: false,
+        modal: true
+      });
+
+      trigger.on('click', function(e) {
+        target.dialog( 'open' );
+        $('.ui-dialog #donor-statement-modal').parent().css({ 'position': 'absolute', 'margin': 'auto', 'top': 0, 'right': 0, 'bottom': 0, 'left': 0, 'width': '1200px', 'height': '600px' });
+        e.preventDefault();
+      });
+    }
+  };
+
+
+  if( $.fn.dialog ) {
+    demos.modalDialog( $('#donor-statement-modal'), $('#button-statement-'+id) );
   }
 }
 
@@ -313,7 +389,6 @@ function signOut(){
     headers: {'Authorization' :'Token token=' + token},
     type: "POST",
     success: function(response, xhr) {
-      window.mpit = JSON.parse(JSON.stringify(response));
       localStorage.clear();
       checkSession();
       getBalanceInformation();
@@ -649,7 +724,7 @@ function addToEndowmentList(source, container) {
             $('#donor-button-modal-' + val.endowment.id).click();
           }
 
-          $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><div id='plan-"+ val.endowment.id +"'></div><br /><div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><br /><br /><a class='btn' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a><div id='loader-donate-"+ val.endowment.id +"' style='display: none; float: right;'><img src='assets/images/preloaders/8.gif' alt=''></div></form></div>");
+          $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><div id='plan-"+ val.endowment.id +"'></div><br /><div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><br /><br /><a class='btn btn-success' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a><div id='loader-donate-"+ val.endowment.id +"' style='display: none; float: right;'><img src='assets/images/preloaders/8.gif' alt=''></div></form></div>");
 
           if (localStorage.session == undefined) {
             $('#plan-' + val.endowment.id).html("<br/><input type='radio' name='time' value='month' disabled>Per Month<br><input type='radio' name='time' value='week' disabled>Per Week<br><input type='radio' name='time' value='onetime' checked='checked'>One Time<br />");
@@ -707,6 +782,9 @@ function donateSubscription(id) {
     var token = session[0]['session']['session'].token;
     var payment_accounts = new Backbone.Collection;
 
+    $('#form-donation-' + localStorage.idEndowment + ' .btn').text('Loading...')
+    $('#form-donation-' + localStorage.idEndowment + ' .btn').attr('disabled', true);
+
     payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/' + window.payment_account_id + '/donate_subscription.json';
     data = { amount: $('#donor_amount_' + id).val(), endowment_id: id }
 
@@ -743,7 +821,7 @@ function donateSubscription(id) {
       }
     });
   } else if (subscribe_plan == "onetime"){
-    Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
+    Stripe.setPublishableKey(window.stripePublishKey);
 
     var stripeResponseHandler = function(status, response) {
       var $form = $('#payment-form-' + id);
@@ -835,6 +913,7 @@ function selectPaymentAccount(id) {
 
 function openProfileForm() {
   $('#profile-modal').dialog();
+  localStorage.setItem('openProfileForm', true);
 }
 
 function donateEndowment(id) {
@@ -842,7 +921,8 @@ function donateEndowment(id) {
   // getProfile();
 
   // $('#select-payment-account-' + localStorage.idEndowment).html("<a class='btn' id='button-profile-"+ window.profile.id +"' onclick='"+  $('#profile-modal').dialog() +"'> Add Payment Account</a>");
-  if ((JSON.parse(window.payment_accounts).length == 0)) {
+
+  if ((localStorage.session !== undefined)  && (JSON.parse(window.payment_accounts).length == 0)) {
     $('#select-payment-account-' + localStorage.idEndowment).html("<a class='btn' id='button-profile-"+ window.profile.id +"' onclick='openProfileForm();'> Add Payment Account</a>");
   };
 
@@ -1019,7 +1099,7 @@ function checkPaymentAccount() {
 }
 
 function createPaymentAccount() {
-  Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
+  Stripe.setPublishableKey(window.stripePublishKey);
   var $form = $('#payment-account-form');
 
   $('#payment-account-form button').text('Loading...')
@@ -1064,13 +1144,25 @@ function createPaymentAccount() {
           var payment_account = payment_accounts[0].payment_account;
 
           $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><span><a onclick='editPaymentAccount("+ payment_account.id +")'> [edit]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
-          // $.each(payment_accounts, function(key, val) {
-          // });
-},
-error: function (errorResponse) {
-  console.log(errorResponse);
-}
-});
+
+          if (localStorage.openProfileForm == "true") {
+            $('#profile-modal').remove();
+
+            if ($('#select-payment-account-' + localStorage.idEndowment + '> select').length == 0) {
+              $('#select-payment-account-'+ localStorage.idEndowment).html("<select id='selected-payment-account-" + localStorage.idEndowment + "'><option>Select Payment Account</option></select>")
+            }
+
+            $('#select-payment-account-' + localStorage.idEndowment + '> select').append("<option value='"+ payment_account.id +"'>" + payment_account.stripe_cust_id + "</option>");
+
+            $('#selected-payment-account-' + localStorage.idEndowment).change(function() {
+              window.payment_account_id = $(this).val();
+            });
+          }
+        },
+        error: function (errorResponse) {
+          console.log(errorResponse);
+        }
+      });
 }
 };
 
@@ -1078,7 +1170,7 @@ Stripe.createToken($form, stripeResponseHandler);
 }
 
 function updatePaymentAccount(id) {
-  Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
+  Stripe.setPublishableKey(window.stripePublishKey);
   var $form = $('#payment-account-form');
 
   $('#payment-account-form button').text('Loading...')
