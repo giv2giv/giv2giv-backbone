@@ -528,7 +528,6 @@ function createEndowment(){
     })
     localStorage.setItem('charity_id', JSON.stringify(charity_id));
 
-
     if (!$(".form-endowment").valid()) return;
     $("input.add-charity").val("LOADING..");
 
@@ -548,7 +547,6 @@ function createEndowment(){
     localStorage.setItem('data_endowment', JSON.stringify(data));
 
     if(localStorage.session == null){
-      console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
       if (charity_id.length == 0) {
         $.pnotify({
           title: 'Oops!',
@@ -562,7 +560,6 @@ function createEndowment(){
       var session = JSON.parse(localStorage.session);
       var token = session[0]['session']['session'].token;
       var charity_id = JSON.parse(localStorage.charity_id);
-      console.log("///////////////////////////////////////////")
 
       if (charity_id.length == 0) {
         $.pnotify({
@@ -581,8 +578,10 @@ function createEndowment(){
           data: JSON.parse(localStorage.data_endowment),
           type: "POST",
           success: function(response,xhr) {
+            var endowment_id = JSON.parse(JSON.stringify(response));
+            addCharityToGroup(endowment_id, charity_id, token);
+
             $('#loader').hide();
-            console.log("*********************************************")
             localStorage.setItem('endowment_id', JSON.stringify(response));
             $('.form-actions').find('button:contains(Next)').click();
 
@@ -597,8 +596,6 @@ function createEndowment(){
           }
         });
 
-        var endowment_id = JSON.parse(localStorage.endowment_id);
-        addCharityToGroup(endowment_id, charity_id, token);
 
         localStorage.removeItem('charity_id');
         localStorage.removeItem('data_endowment');
