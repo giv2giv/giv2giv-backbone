@@ -130,7 +130,7 @@ function getProfile(){
 
         $('#button-profile-'+ profile.id).click();
 
-        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='profile-name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><div id='payment-accounts'></div><ul id='donate' class='stats-container'></ul></div>");
+        $('#profile-details').html("<div id='profile-modal' href='#'><form id='form-profile' method='post'><div class='control-group'><label class='control-label' for='input00'>Name</label><div class='controls'><input type='text' id='profile-name'></div><label class='control-label' for='input00'>Email</label><div class='controls'><span id='email input07' class='uneditable-input'>"+profile.email+"</span></div><label class='control-label' for='input00'>Address</label><div class='controls'><input type='text' id='address'></div><label class='control-label' for='input00'>City, State, Zip</label><div class='controls'><input type='text' class='input-mini' placeholder='city' id='city'><input type='text' class='input-mini' placeholder='state' id='zip'><input type='text' class='input-mini' placeholder='zip' id='state'></div><label class='control-label' for='input00'>Phone</label><div class='controls'><input type='text' id='phone_number'></div></div><a class='btn btn-success' onclick='updateProfile();' href='javascript:void(0)'>Save</a></form><div id='loader-profile' style='display: none;'><img src='assets/images/preloaders/8.gif' alt=''></div><hr/><div id='payment-accounts'></div><ul id='donate' class='stats-container'></ul></div>");
 
         $('.profile-username').text(profile.name);
 
@@ -755,7 +755,6 @@ function donateSubscription(id) {
         var stripe_token = response.id;
         console.log(stripe_token)
         $form.append($('<input type="hidden" name="stripeToken" />').val(stripe_token));
-        // $form.find('.payment-errors').text(stripe_token);
 
         var payment_accounts = new Backbone.Collection;
 
@@ -1023,6 +1022,9 @@ function createPaymentAccount() {
   Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
   var $form = $('#payment-account-form');
 
+  $('#payment-account-form button').text('Loading...')
+  $('#payment-account-form button').attr('disabled', true);
+
   var stripeResponseHandler = function(status, response) {
     if (response.error) {
       $form.find('.payment-errors').text(response.error.message);
@@ -1050,6 +1052,8 @@ function createPaymentAccount() {
           window.payment_accounts = JSON.stringify(response);
           var payment_accounts = JSON.parse(window.payment_accounts);
           $('#payment-account-form input').val("");
+          $('#payment-account-form button').text('Create Payment Account')
+          $('#payment-account-form button').attr('disabled', false);
 
           $.pnotify({
             title: 'Yeah',
@@ -1077,6 +1081,9 @@ function updatePaymentAccount(id) {
   Stripe.setPublishableKey('pk_test_ys65GDVxkAM0Ej8fwpDItB2s');
   var $form = $('#payment-account-form');
 
+  $('#payment-account-form button').text('Loading...')
+  $('#payment-account-form button').attr('disabled', true);
+
   var stripeResponseHandler = function(status, response) {
     if (response.error) {
       $form.find('.payment-errors').text(response.error.message);
@@ -1102,41 +1109,17 @@ function updatePaymentAccount(id) {
         data: data,
         type: "PUT",
         success: function(response, xhr) {
-          response = JSON.parse(JSON.stringify(response));
-          if ((response[0].message) == "Success") {
-            $('#donor-modal-' + id).remove()
-            $('#loader-donate').hide();
-            $.pnotify({
-              title: 'Yeah',
-              text: "Successfully update payment account.",
-              type: 'success'
-            });
+          $('#payment-accounts form').html("<span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 37px; width: 58%;'/></div><button type='submit' class='btn btn-success btn-block' onclick='createPaymentAccount(); return false;' style='width: 86%;'>Create Payment Account</button>");
 
-            $('#payment-account-' + id).html("Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount(id)'> [x]</a></span><br /><div style='margin-left: 15px;'><div>Payment Updated</div></div>");
+          $('#payment-account-form button').text('Create Payment Account')
+          $('#payment-account-form button').attr('disabled', false);
 
-            // var enDetails = JSON.parse(localStorage.endowment_details)[0];
-            // checkPaymentAccont(id, enDetails);
-          } else {
-            $.pnotify({
-              title: 'Oops',
-              text: response[0].message,
-              type: 'error'
-            });
-          }
+          $.pnotify({
+            title: 'Yeah',
+            text: "Successfully update payment account.",
+            type: 'success'
+          });
 
-
-          // window.payment_accounts = JSON.stringify(response);
-          // var payment_accounts = JSON.parse(window.payment_accounts);
-          // $('#payment-account-form input').val("");
-
-          // $.pnotify({
-          //   title: 'Yeah',
-          //   text: "Successfully update payment account.",
-          //   type: 'success'
-          // });
-
-          // var payment_account = payment_accounts[0].payment_account;
-          // $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
         },
         error: function (errorResponse) {
           console.log(errorResponse);
