@@ -730,6 +730,14 @@ function addToEndowmentList(source, container) {
           } else {
             $('#plan-' + val.endowment.id).html("<br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<br />");
 
+            $('input[name=time]', '#form-donation-' + val.endowment.id).click(function() {
+              if ($('input[name=time]:checked').val() == 'onetime') {
+                $('#plan-' + val.endowment.id).append("<br /><input type='password' placeholder='Password' name='[password]' id='input-password-one-time' class='big required'>")
+              } else {
+                $('#plan-' + val.endowment.id + '> input[id=input-password-one-time]').remove();
+              }
+            });
+
             // cek payment account
 
           }
@@ -818,59 +826,104 @@ function donateSubscription(id) {
       }
     });
   } else if (subscribe_plan == "onetime"){
-    Stripe.setPublishableKey(window.stripePublishKey);
+    $('#form-donation-' + localStorage.idEndowment + ' .btn').text('Loading...')
+    $('#form-donation-' + localStorage.idEndowment + ' .btn').attr('disabled', true);
 
-    var stripeResponseHandler = function(status, response) {
-      var $form = $('#payment-form-' + id);
+    if (localStorage.session == undefined) {
+      Stripe.setPublishableKey(window.stripePublishKey);
 
-      if (response.error) {
-        $form.find('.payment-errors').text(response.error.message);
-        $form.find('button').prop('disabled', false);
-      } else {
-        var stripe_token = response.id;
-        console.log(stripe_token)
-        $form.append($('<input type="hidden" name="stripeToken" />').val(stripe_token));
+      var stripeResponseHandler = function(status, response) {
+        var $form = $('#payment-form-' + id);
 
-        var payment_accounts = new Backbone.Collection;
+        if (response.error) {
+          $form.find('.payment-errors').text(response.error.message);
+          $form.find('button').prop('disabled', false);
+        } else {
+          var stripe_token = response.id;
+          console.log(stripe_token)
+          $form.append($('<input type="hidden" name="stripeToken" />').val(stripe_token));
 
-        payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
-        data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: $('#email-' + id).val(), stripeToken: stripe_token}
+          var payment_accounts = new Backbone.Collection;
 
-        $('#loader-donate-' + id).show();
+          payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
+          data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: $('#email-' + id).val(), stripeToken: stripe_token}
 
-        payment_accounts.fetch({
-          data: data,
-          type: "POST",
-          success: function(response, xhr) {
-            response = JSON.parse(JSON.stringify(response));
-            if ((response[0].message) == "Success") {
-              $('#donor-modal-' + id).remove();
-              $('#dialog-modal-' + id).remove();
-              $('#loader-donate-' + id).hide();
-              $.pnotify({
-                title: 'Yeah',
-                text: "Successfully donate to this endowment.",
-                type: 'success'
-              });
-            } else {
-              $.pnotify({
-                title: 'Oops',
-                text: response[0].message,
-                type: 'error'
-              });
+          $('#loader-donate-' + id).show();
+
+          payment_accounts.fetch({
+            data: data,
+            type: "POST",
+            success: function(response, xhr) {
+              response = JSON.parse(JSON.stringify(response));
+              if ((response[0].message) == "Success") {
+                $('#donor-modal-' + id).remove();
+                $('#dialog-modal-' + id).remove();
+                $('#loader-donate-' + id).hide();
+                $.pnotify({
+                  title: 'Yeah',
+                  text: "Successfully donate to this endowment.",
+                  type: 'success'
+                });
+              } else {
+                $.pnotify({
+                  title: 'Oops',
+                  text: response[0].message,
+                  type: 'error'
+                });
+              }
+
+            },
+            error: function (errorResponse) {
+              window.errorResponse = console.log(errorResponse);
             }
+          });
+        }
+      };
 
-          },
-          error: function (errorResponse) {
-            window.errorResponse = console.log(errorResponse);
+      var $form = $('#payment-form-' + id);
+      Stripe.createToken($form, stripeResponseHandler);
+    } else {
+      alert("pityyyyyyy");
+      var session = JSON.parse(localStorage.session);
+      var token = session[0]['session']['session'].token;
+      var payment_accounts = new Backbone.Collection;
+
+      payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
+      data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: session[0]['donor'].donor.email, payment_account_id: window.payment_account_id, password: $('#input-password-one-time').val() }
+
+      $('#loader-donate').show();
+
+      payment_accounts.fetch({
+        headers: {'Authorization' :'Token token=' + token},
+        data: data,
+        type: "POST",
+        success: function(response, xhr) {
+          response = JSON.parse(JSON.stringify(response));
+          if ((response[0].message) == "Success") {
+            $('#donor-modal-' + id).remove()
+            $('#loader-donate').hide();
+            $.pnotify({
+              title: 'Yeah',
+              text: "Successfully donate to this endowment.",
+              type: 'success'
+            });
+
+            var enDetails = JSON.parse(localStorage.endowment_details)[0];
+            checkPaymentAccont(id, enDetails);
+          } else {
+            $.pnotify({
+              title: 'Oops',
+              text: response[0].message,
+              type: 'error'
+            });
           }
-        });
-      }
-    };
 
-    var $form = $('#payment-form-' + id);
-    Stripe.createToken($form, stripeResponseHandler);
-
+        },
+        error: function (errorResponse) {
+          window.errorResponse = console.log(errorResponse);
+        }
+      });
+    }
   }
 }
 
