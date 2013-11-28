@@ -883,7 +883,6 @@ function donateSubscription(id) {
       var $form = $('#payment-form-' + id);
       Stripe.createToken($form, stripeResponseHandler);
     } else {
-      alert("pityyyyyyy");
       var session = JSON.parse(localStorage.session);
       var token = session[0]['session']['session'].token;
       var payment_accounts = new Backbone.Collection;
