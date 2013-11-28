@@ -465,23 +465,23 @@ function endowmentFirstStep(){
   if (!$(".form-endowment").valid()) return;
   $("input.endowment-first-step").val("LOADING..");
 
-  var charities = new Backbone.Collection;
-  charities.url = window.serverUrl + 'api/charity.json';
+  // var charities = new Backbone.Collection;
+  // charities.url = window.serverUrl + 'api/charity.json';
 
-  $('#loader').show();
-  charities.fetch({
-    data: { "page":"1", "per_page":"400" },
-    success: function(response,xhr) {
-      window.charities = response;
-      addToList(JSON.stringify(window.charities));
-      $('#loader').hide();
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
+  // $('#loader').show();
+  // charities.fetch({
+  //   data: { "page":"1", "per_page":"400" },
+  //   success: function(response,xhr) {
+  //     window.charities = response;
+  //     addToList(JSON.stringify(window.charities));
+  //     $('#loader').hide();
+  //   },
+  //   error: function (errorResponse) {
+  //     console.log(errorResponse);
+  //   }
+  // });
 
-  $('.form-actions').find('button:contains(Next)').click();
+$('.form-actions').find('button:contains(Next)').click();
 }
 
 function createEndowment(){
@@ -522,10 +522,15 @@ function createEndowment(){
     localStorage.removeItem('data_endowment');
     localStorage.removeItem('endowment_id');
   } else {
-    var charity_id = new Array;
-    $.each($('.select2-search-choice div'), function(key, val){
-      charity_id.push($(val).attr("value"));
-    })
+    // input charities old way
+    // var charity_id = new Array;
+    // $.each($('.select2-search-choice div'), function(key, val){
+    //   charity_id.push($(val).attr("value"));
+    // })
+    // localStorage.setItem('charity_id', JSON.stringify(charity_id));
+
+    // input charities new way
+    var charity_id = $('#selected-charities li').map(function(i,n) { return $(n).attr('id');}).get();
     localStorage.setItem('charity_id', JSON.stringify(charity_id));
 
     if (!$(".form-endowment").valid()) return;
@@ -1192,7 +1197,7 @@ function createPaymentAccount() {
 
           var payment_account = payment_accounts[0].payment_account;
 
-          $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ '-' + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><span><a onclick='editPaymentAccount("+ payment_account.id +")'> [edit]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
+          $('#payment-accounts ul').append("<li id='payment-account-"+ payment_account.id +"'>Payment Account "+ payment_account.id + "<span><a onclick='destroyPaymentAccount("+ payment_account.id +")'> [x]</a></span><span><a onclick='editPaymentAccount("+ payment_account.id +")'> [edit]</a></span><br /><div style='margin-left: 15px;'><div>" + payment_account.processor + " - " + payment_account.stripe_cust_id +"</div></div></li><br />");
 
           if (localStorage.openProfileForm == "true") {
             $('#profile-modal').remove();
@@ -1356,28 +1361,46 @@ $('input#query').on('keyup', function(){
           $('#loader').hide();
           window.charities = JSON.parse(JSON.stringify(response));
 
-          $('#charity-details').html("");
-          $('.charities-container').html("<ul id='charities' style='list-style: none;'>")
-          $.each(window.charities, function(key, val) {
-            if (val.message !== "Not found") {
-              $('.charities-container #charities').append("<li onclick='detailCharity("+ val.charity.id +");' class='list-charity' id='button-charity-"+ val.charity.id +"'><span style='color: #0088CC; text-decoration: none;'>"+ val.charity.name +"<span class='muted' style='font-size: 11px; display: block;'>"+ val.charity.city +"</span></span></li>");
+          var str = window.location.pathname;
+          if (str.indexOf("new_endowment") !== -1) {
+            $('#charity-details').html("");
+            $('.charities-container').html("<ul id='charities' style='list-style: none;'>")
+            $.each(window.charities, function(key, val) {
+              if (val.message !== "Not found") {
+                $('.charities-container #charities').append("<li onclick='selectThisCharity("+ val.charity.id + ',' + '"' + val.charity.name + '"' +");' class='list-charity' id='button-charity-"+ val.charity.id +"'><span style='color: #0088CC; text-decoration: none;'>"+ val.charity.name +"<span class='muted' style='font-size: 11px; display: block;'>"+ val.charity.city +"</span></span></li>");
+              }
+            });
 
-              $('#charity-details').append("<div id='charity-details-"+ val.charity.id +"'><p>Charity Name: <b>"+ val.charity.name +"</b></p><p>Charity Email: <b>"+ val.charity.email +"</b></p><p>Address: <b>"+ val.charity.address +"</b></p><p>City, State, Zip: <b>"+ '-' +"</b></p><p>Activity: <b>"+ '-' +"</b></p><p>Classification: <b>"+ val.charity.classification_code +"</b></p><p>NTEE: <b>"+ val.charity.ntee_code +"</b></p><br/><p>Total granted to charity from me: <b>"+ '-' +"</b></p><p>Total granted to charity from giv2giv: <b>"+ '-' +"</b><br/></div>");
-            }
-          });
+          } else if(str.indexOf("charities") !== -1) {
+            $('#charity-details').html("");
+            $('.charities-container').html("<ul id='charities' style='list-style: none;'>")
+            $.each(window.charities, function(key, val) {
+              if (val.message !== "Not found") {
+                $('.charities-container #charities').append("<li onclick='detailCharity("+ val.charity.id +");' class='list-charity' id='button-charity-"+ val.charity.id +"'><span style='color: #0088CC; text-decoration: none;'>"+ val.charity.name +"<span class='muted' style='font-size: 11px; display: block;'>"+ val.charity.city +"</span></span></li>");
 
-
-        },
-        error: function (errorResponse) {
-          console.log(errorResponse);
-        }
-      });
+                $('#charity-details').append("<div id='charity-details-"+ val.charity.id +"'><p>Charity Name: <b>"+ val.charity.name +"</b></p><p>Charity Email: <b>"+ val.charity.email +"</b></p><p>Address: <b>"+ val.charity.address +"</b></p><p>City, State, Zip: <b>"+ '-' +"</b></p><p>Activity: <b>"+ '-' +"</b></p><p>Classification: <b>"+ val.charity.classification_code +"</b></p><p>NTEE: <b>"+ val.charity.ntee_code +"</b></p><br/><p>Total granted to charity from me: <b>"+ '-' +"</b></p><p>Total granted to charity from giv2giv: <b>"+ '-' +"</b><br/></div>");
+              }
+            });
+}
+},
+error: function (errorResponse) {
+  console.log(errorResponse);
+}
+});
 }
 }
 $(this).data('val', this.value);
 });
 }
 
+function selectThisCharity(id, name) {
+  console.log(id)
+  $('#selected-charities').append("<li id='"+ id +"'>" + name + "<span><a onclick='removeSelectedCharity("+ id +")'> [x]</a></span><li>")
+}
+
+function removeSelectedCharity(id) {
+  $('#' + id).remove();
+}
 
 function detailCharity(id) {
   localStorage.setItem('idCharity', id);

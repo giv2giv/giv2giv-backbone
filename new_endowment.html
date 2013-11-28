@@ -42,6 +42,17 @@
   <link rel="stylesheet" href="plugins/select2/select2.css" media="screen">
   <link rel="stylesheet" href="plugins/pnotify/jquery.pnotify.css" media="screen">
 
+  <style type="text/css">
+  .list-charity {
+    border-top: 1px solid #CDCDCD;
+    line-height: 18px;
+    margin-left: 136px;
+    margin-right: 21px;
+    padding: 5px 10px 2px;
+    cursor: pointer;
+  }
+  </style>
+
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -181,115 +192,125 @@
                           <div class="control-group">
                             <label class="control-label" for="input02">Charities</label>
                             <div class="controls">
-                              <select id="input20" class="select2-select-00 span12" multiple size="5" data-placeholder="Select Charities">
-                              </select>
-                            </div>
+                              <input type="text" name="query" class="span12" id="query">
+                              <!-- <select id="input20" class="select2-select-00 span12" multiple size="5" data-placeholder="Select Charities"> -->
+                            </select>
                           </div>
+                        </div>
 
-                          <div class="form-actions btn-toolbar">
-                            <input id="endowsment-submit" class="btn hidden" type="submit" value="Next" name="commit">
-                            <a class="btn add-charity" onclick="createEndowment();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Create Endowment</a>
-                          </div>
-                        </fieldset>
+                        <div class="charities-container" style="">
+                          <ul id="charities" style="list-style: none;"></ul>
+                        </div>
 
-                        <fieldset class="wizard-step">
-                          <legend class="wizard-label"><i class="icon-ok"></i> Subscribe/ Donate Page</legend>
-                          <div class="control-group">
-                            <label class="control-label">Endowment created!</label>
-                            <br />
-                            <a class="btn add-charity" onclick="" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Schedule Donations</a>
-                            <br />
-                            <a class="btn add-charity" onclick="goToDashboard();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Skip this step & return to dashboard</a>
-                          </div>
-                        </fieldset>
-                      </form>
-                    </div>
+                        <div class="selected-charities-container" style="">
+                          <ul id="selected-charities" style="list-style: none;"></ul>
+                        </div>
 
+                        <div class="form-actions btn-toolbar">
+                          <input id="endowsment-submit" class="btn hidden" type="submit" value="Next" name="commit">
+                          <a class="btn add-charity" onclick="createEndowment();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Create Endowment</a>
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="wizard-step">
+                        <legend class="wizard-label"><i class="icon-ok"></i> Subscribe/ Donate Page</legend>
+                        <div class="control-group">
+                          <label class="control-label">Endowment created!</label>
+                          <br />
+                          <a class="btn add-charity" onclick="" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Schedule Donations</a>
+                          <br />
+                          <a class="btn add-charity" onclick="goToDashboard();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Skip this step & return to dashboard</a>
+                        </div>
+                      </fieldset>
+                    </form>
                   </div>
 
                 </div>
+
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>
-
-    <footer id="footer">
-      <div class="footer-right"><p>Copyright 2013. All Rights Reserved.</p></div>
-    </footer>
-
   </div>
 
-  <!-- Core Scripts -->
-  <script src="assets/js/libs/jquery-1.8.3.min.js"></script>
-  <script src="bootstrap/js/bootstrap.min.js"></script>
-  <script src="assets/js/libs/jquery.placeholder.min.js"></script>
-  <script src="assets/js/libs/jquery.mousewheel.min.js"></script>
+  <footer id="footer">
+    <div class="footer-right"><p>Copyright 2013. All Rights Reserved.</p></div>
+  </footer>
 
-  <!-- Template Script -->
-  <script src="assets/js/template.js"></script>
-  <script src="assets/js/setup.js"></script>
+</div>
 
-  <!-- Customizer, remove if not needed -->
-  <script src="assets/js/customizer.js"></script>
+<!-- Core Scripts -->
+<script src="assets/js/libs/jquery-1.8.3.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/libs/jquery.placeholder.min.js"></script>
+<script src="assets/js/libs/jquery.mousewheel.min.js"></script>
 
-  <!-- Uniform Script -->
-  <script src="plugins/uniform/jquery.uniform.min.js"></script>
+<!-- Template Script -->
+<script src="assets/js/template.js"></script>
+<script src="assets/js/setup.js"></script>
 
-  <!-- jquery-ui Scripts -->
-  <script src="assets/jui/js/jquery-ui-1.9.2.min.js"></script>
-  <script src="assets/jui/jquery-ui.custom.min.js"></script>
-  <script src="assets/jui/timepicker/jquery-ui-timepicker.min.js"></script>
-  <script src="assets/jui/jquery.ui.touch-punch.min.js"></script>
+<!-- Customizer, remove if not needed -->
+<script src="assets/js/customizer.js"></script>
 
-  <!-- Plugin Scripts -->
+<!-- Uniform Script -->
+<script src="plugins/uniform/jquery.uniform.min.js"></script>
 
-  <!-- Validation -->
-  <script src="plugins/validate/jquery.validate.min.js"></script>
+<!-- jquery-ui Scripts -->
+<script src="assets/jui/js/jquery-ui-1.9.2.min.js"></script>
+<script src="assets/jui/jquery-ui.custom.min.js"></script>
+<script src="assets/jui/timepicker/jquery-ui-timepicker.min.js"></script>
+<script src="assets/jui/jquery.ui.touch-punch.min.js"></script>
 
-  <!-- Wizard -->
-  <script src="custom-plugins/wizard/wizard.js"></script>
-  <script src="custom-plugins/wizard/jquery.form.min.js"></script>
+<!-- Plugin Scripts -->
 
-  <!-- PickList -->
-  <!-- <script src="custom-plugins/picklist/picklist.min.js"></script> -->
+<!-- Validation -->
+<script src="plugins/validate/jquery.validate.min.js"></script>
 
-  <!-- Demo Scripts -->
-  <script src="assets/js/demo/form_wizard.js"></script>
-  <script src="assets/js/demo/form.js"></script>
-  <script src="plugins/select2/select2.js"></script>
+<!-- Wizard -->
+<script src="custom-plugins/wizard/wizard.js"></script>
+<script src="custom-plugins/wizard/jquery.form.min.js"></script>
 
-  <script type="text/javascript" src="assets/js/tag-it.js"></script>
-  <script type="text/javascript" src="assets/js/applications.js"></script>
-  <script type="text/javascript" src="assets/js/underscore.js"></script>
-  <script type="text/javascript" src="assets/js/backbone.js"></script>
-  <script type="text/javascript" src="assets/js/backbone_datalink.js"></script>
-  <script type="text/javascript" src="assets/js/jquery.tokeninput.js"></script>
-  <script src="plugins/pnotify/jquery.pnotify.min.js"></script>
-  <script type="text/javascript">
-  $(document).ready(function() {
-    checkSession();
+<!-- PickList -->
+<!-- <script src="custom-plugins/picklist/picklist.min.js"></script> -->
 
-    $("#wizard-demo-2").submit(function(event){
-      event.preventDefault();
-      if(event.keyCode == 13){
-        $(".endowment-first-step").click();
-      }
-    });
+<!-- Demo Scripts -->
+<script src="assets/js/demo/form_wizard.js"></script>
+<script src="assets/js/demo/form.js"></script>
+<script src="plugins/select2/select2.js"></script>
 
-    $("#description").keyup(function(event){
-      event.preventDefault();
-      if(event.keyCode == 13){
-        $(".endowment-first-step").click();
-      }
-    });
+<script type="text/javascript" src="assets/js/tag-it.js"></script>
+<script type="text/javascript" src="assets/js/applications.js"></script>
+<script type="text/javascript" src="assets/js/underscore.js"></script>
+<script type="text/javascript" src="assets/js/backbone.js"></script>
+<script type="text/javascript" src="assets/js/backbone_datalink.js"></script>
+<script type="text/javascript" src="assets/js/jquery.tokeninput.js"></script>
+<script src="plugins/pnotify/jquery.pnotify.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  checkSession();
+  searchCharities();
+
+  $("#wizard-demo-2").submit(function(event){
+    event.preventDefault();
+    if(event.keyCode == 13){
+      $(".endowment-first-step").click();
+    }
+  });
+
+  $("#description").keyup(function(event){
+    event.preventDefault();
+    if(event.keyCode == 13){
+      $(".endowment-first-step").click();
+    }
+  });
 
     // var donors = new Backbone.Collection;
     // donors.url = window.serverUrl + 'api/charity.json';
     // $("#charities").tokenInput(donors.url);
   });
-  </script>
+</script>
 </body>
 
 </html>
