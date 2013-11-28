@@ -147,7 +147,7 @@ function getProfile(){
       },
       error: function (errorResponse) {
         console.log(errorResponse);
-        redirect("index.html");
+        // redirect("index.html");
       }
     });
 }
@@ -405,53 +405,53 @@ function redirect(data){
   window.location.href = url;
 }
 
-function getCharities() {
-  var charities = new Backbone.Collection;
-  charities.url = window.serverUrl + 'api/charity.json';
-  $('#loader').show();
+// function getCharities() {
+//   var charities = new Backbone.Collection;
+//   charities.url = window.serverUrl + 'api/charity.json';
+//   $('#loader').show();
 
-  charities.fetch({
-    data: { "page":"1", "per_page":"400" },
-    success: function(response,xhr) {
-      window.charities = JSON.stringify(response);
-      $.each(JSON.parse(window.charities), function(key, val) {
-        if (val.charity !== undefined) {
-          $('#charities').append('<li><a href="charity_details.html" onclick="detailCharity('+val["charity"].id+');">'+ val['charity'].name +'<span style="font-size: 11px; display: block;" class="muted">' + val['charity'].city + '</span></a></li>')
-        }
-      });
-      $('#loader').hide();
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
-}
+//   charities.fetch({
+//     data: { "page":"1", "per_page":"400" },
+//     success: function(response,xhr) {
+//       window.charities = JSON.stringify(response);
+//       $.each(JSON.parse(window.charities), function(key, val) {
+//         if (val.charity !== undefined) {
+//           $('#charities').append('<li><a href="charity_details.html" onclick="detailCharity('+val["charity"].id+');">'+ val['charity'].name +'<span style="font-size: 11px; display: block;" class="muted">' + val['charity'].city + '</span></a></li>')
+//         }
+//       });
+//       $('#loader').hide();
+//     },
+//     error: function (errorResponse) {
+//       console.log(errorResponse);
+//     }
+//   });
+// }
 
-function detailCharity(id) {
-  localStorage.setItem('idCharity', id);
-  redirect("charity_details.html");
-}
+// function detailCharity(id) {
+//   localStorage.setItem('idCharity', id);
+//   redirect("charity_details.html");
+// }
 
-function getDetailCharity() {
-  var charities = new Backbone.Collection;
-  charities.url = window.serverUrl + 'api/charity/' + localStorage.idCharity + '.json';
+// function getDetailCharity() {
+//   var charities = new Backbone.Collection;
+//   charities.url = window.serverUrl + 'api/charity/' + localStorage.idCharity + '.json';
 
-  charities.fetch({
-    success: function(response,xhr) {
-      window.charity = JSON.stringify(response);
-      var charity = JSON.parse(window.charity);
-      $('#name').text(charity[0]['charity'].name);
-      $('#email').text(charity[0]['charity'].email);
-      $('#address').text(charity[0]['charity'].address);
-      $('#city').text(charity[0]['charity'].city + ", " + charity[0]['charity'].state + ", " + charity[0]['charity'].zip);
-      $('#classification').text(charity[0]['charity'].classification_code);
-      $('#ntee').text(charity[0]['charity'].ntee_code);
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
-}
+//   charities.fetch({
+//     success: function(response,xhr) {
+//       window.charity = JSON.stringify(response);
+//       var charity = JSON.parse(window.charity);
+//       $('#name').text(charity[0]['charity'].name);
+//       $('#email').text(charity[0]['charity'].email);
+//       $('#address').text(charity[0]['charity'].address);
+//       $('#city').text(charity[0]['charity'].city + ", " + charity[0]['charity'].state + ", " + charity[0]['charity'].zip);
+//       $('#classification').text(charity[0]['charity'].classification_code);
+//       $('#ntee').text(charity[0]['charity'].ntee_code);
+//     },
+//     error: function (errorResponse) {
+//       console.log(errorResponse);
+//     }
+//   });
+// }
 
 function addToList(source) {
   $.each(JSON.parse(source), function(key, val) {
@@ -1272,26 +1272,6 @@ function updatePaymentAccount(id) {
 Stripe.createToken($form, stripeResponseHandler);
 }
 
-function searchCharities() {
-  var charities = new Backbone.Collection;
-  charities.url = window.serverUrl + 'api/charity.json';
-  var data = { query: $('#query').val() }
-  $('#loader').show();
-
-  charities.fetch({
-    data: data,
-    success: function(response, xhr) {
-      $('#loader').hide();
-      window.charities = JSON.stringify(response);
-
-      addToCharityList(JSON.stringify(response));
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
-}
-
 function addToCharityList(source) {
   $('#container-charities').html("");
   $.each(JSON.parse(source), function(key, val) {
@@ -1304,7 +1284,104 @@ function addToCharityList(source) {
   });
 }
 
+// function detailCharity(id) {
+//   var demos = {
+//     modalDialog: function( target, trigger ) {
+//       target.dialog({
+//         autoOpen: false,
+//         modal: true
+//       });
+
+//       trigger.on('click', function(e) {
+//         target.dialog( 'open' );
+//         e.preventDefault();
+//       });
+//     }
+//   };
+
+//   if( $.fn.dialog ) {
+//     demos.modalDialog( $('#dialog-modal-'+id), $('#button-modal-'+id) );
+//   }
+// }
+
+// function searchCharities() {
+//   var charities = new Backbone.Collection;
+//   charities.url = window.serverUrl + 'api/charity.json';
+//   var data = { query: $('#query').val() }
+//   $('#loader').show();
+
+//   charities.fetch({
+//     data: data,
+//     success: function(response, xhr) {
+//       $('#loader').hide();
+//       window.charities = JSON.stringify(response);
+
+//       addToCharityList(JSON.stringify(response));
+//     },
+//     error: function (errorResponse) {
+//       console.log(errorResponse);
+//     }
+//   });
+// }
+
+function searchCharities() {
+  // var delay = (function(){
+  //   var timer = 0;
+  //   return function(callback, ms){
+  //     clearTimeout (timer);
+  //     timer = setTimeout(callback, ms);
+  //   };
+  // });
+
+  // delay(function(){
+  //   fungsiyangdieksekusi()
+  // }, 1000)
+
+$('input#query').on('keyup', function(){
+  if ($(this).data('val')!=this.value) {
+    var query = $(this).val();
+
+    var charities = new Backbone.Collection;
+    charities.url = window.serverUrl + 'api/charity.json';
+    var data = { query: query }
+    $('#loader').show();
+
+    if ((query == "") || ($('#query').val() == "")) {
+      $('#loader').hide();
+      $('.charities-container').html("");
+    } else {
+      charities.fetch({
+        data: data,
+        success: function(response, xhr) {
+          $('#loader').hide();
+          window.charities = JSON.parse(JSON.stringify(response));
+
+          $('#charity-details').html("");
+          $('.charities-container').html("<ul id='charities' style='list-style: none;'>")
+          $.each(window.charities, function(key, val) {
+            if (val.message !== "Not found") {
+              $('.charities-container #charities').append("<li onclick='detailCharity("+ val.charity.id +");' class='list-charity' id='button-charity-"+ val.charity.id +"'><span style='color: #0088CC; text-decoration: none;'>"+ val.charity.name +"<span class='muted' style='font-size: 11px; display: block;'>"+ val.charity.city +"</span></span></li>");
+
+              $('#charity-details').append("<div id='charity-details-"+ val.charity.id +"'><p>Charity Name: <b>"+ val.charity.name +"</b></p><p>Charity Email: <b>"+ val.charity.email +"</b></p><p>Address: <b>"+ val.charity.address +"</b></p><p>City, State, Zip: <b>"+ '-' +"</b></p><p>Activity: <b>"+ '-' +"</b></p><p>Classification: <b>"+ val.charity.classification_code +"</b></p><p>NTEE: <b>"+ val.charity.ntee_code +"</b></p><br/><p>Total granted to charity from me: <b>"+ '-' +"</b></p><p>Total granted to charity from giv2giv: <b>"+ '-' +"</b><br/></div>");
+            }
+          });
+
+
+        },
+        error: function (errorResponse) {
+          console.log(errorResponse);
+        }
+      });
+}
+}
+$(this).data('val', this.value);
+});
+}
+
+
 function detailCharity(id) {
+  localStorage.setItem('idCharity', id);
+
   var demos = {
     modalDialog: function( target, trigger ) {
       target.dialog({
@@ -1320,7 +1397,29 @@ function detailCharity(id) {
   };
 
   if( $.fn.dialog ) {
-    demos.modalDialog( $('#dialog-modal-'+id), $('#button-modal-'+id) );
+    demos.modalDialog( $('#charity-details-'+id), $('#button-charity-'+id) );
   }
+
+  $('#button-charity-'+ id).click();
 }
 
+// function getDetailCharity() {
+//   var charities = new Backbone.Collection;
+//   charities.url = window.serverUrl + 'api/charity/' + localStorage.idCharity + '.json';
+
+//   charities.fetch({
+//     success: function(response,xhr) {
+//       window.charity = JSON.stringify(response);
+//       var charity = JSON.parse(window.charity);
+//       $('#name').text(charity[0]['charity'].name);
+//       $('#email').text(charity[0]['charity'].email);
+//       $('#address').text(charity[0]['charity'].address);
+//       $('#city').text(charity[0]['charity'].city + ", " + charity[0]['charity'].state + ", " + charity[0]['charity'].zip);
+//       $('#classification').text(charity[0]['charity'].classification_code);
+//       $('#ntee').text(charity[0]['charity'].ntee_code);
+//     },
+//     error: function (errorResponse) {
+//       console.log(errorResponse);
+//     }
+//   });
+// }
