@@ -220,6 +220,8 @@ function getDonorStatement() {
     success: function(response,xhr) {
       var profile = JSON.parse(localStorage.profile)[0]['donor'];
       var response = JSON.parse(JSON.stringify(response));
+      window.mpit = response;
+      var count = Object.keys(response[0]).length
       // localStorage.setItem('profile', JSON.stringify(response));
       // detailStatement(profile.id);
 
@@ -227,23 +229,42 @@ function getDonorStatement() {
 
       $('#button-statement-'+ profile.id).click();
 
-      $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'><li>Donations To: Endowment Name<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+      if (count == 0) {
+        $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'>No More Donations</ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
 
-      $.each(response, function(key, val) {
-        var val = val[0];
+      } else {
+        $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+      }
+
+      $.each(new Array(count), function(n){
+        var val = response[0][n+1];
+        window.aa = val
+
+        if (val !== undefined) {
+          var endowment = getDetailEndowment(val.donor_subscription.endowment_id);
+          // var enDetails = JSON.parse(localStorage.endowment_details)[0];
+          // $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name + "<br /><div style='margin-left: 15px;'><div style='float: left;'>Name: </div><div style='margin-left: 45px;'>" + window.val.donor_subscription.created_at +"</div></div></li><br />");
+          $('#donation-container').append("<li>Donations To: Endowment Name<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
+        }
+      }
+      );
+$.each(count, function(key, val) {
+  var val = val[0];
         // var endowment = getEndowentById(val.donor_subscription.endowment_id);
         if (val !== undefined) {
           var endowment = getDetailEndowment(val.donor_subscription.endowment_id);
           var enDetails = JSON.parse(localStorage.endowment_details)[0];
-          $('#donation-container').append("<li>Donations To: "+ enDetails.name + "<br /><div style='margin-left: 15px;'><div style='float: left;'>Name: </div><div style='margin-left: 45px;'>" + val.donor_subscription +"</div></div></li><br />");
+          // console.log(enDetails.endowment.endowment.name);
+          // $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name + "<br /><div style='margin-left: 15px;'><div style='float: left;'>Name: </div><div style='margin-left: 45px;'>" + window.val.donor_subscription.created_at +"</div></div></li><br />");
+          $('#donation-container').append("<li>Donations To: Endowment Name<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
         }
       })
 
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
+},
+error: function (errorResponse) {
+  console.log(errorResponse);
+}
+});
 }
 
 function getEndowentById(id) {
@@ -256,7 +277,7 @@ function getEndowentById(id) {
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
     success: function(response, xhr) {
-      window.mpit = JSON.parse(JSON.strigify(response));
+      JSON.parse(JSON.strigify(response));
     },
     error: function (errorResponse) {
       console.log(errorResponse);
@@ -695,6 +716,8 @@ function addToEndowmentList(source, container) {
         if (enDetails.my_balances !== undefined) {
           $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
+          // for donor statement
+          // $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name +"<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
 
           memberCharityEndowment(val.endowment.charities, val.endowment.id);
 
