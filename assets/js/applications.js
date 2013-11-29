@@ -21,6 +21,11 @@ function checkSession() {
     $('.inner-nav').html("");
     $('.inner-nav').append("<li class='active'><a href='index.html'><i class='icol-dashboard'></i> Dashboard</a></li><li><a href='login.html'><i class='icol-key'></i> Login</a></li>");
 
+    var str = window.location.href;
+    if (str.indexOf("reset_token") !== -1) {
+      resetPassword();
+    }
+
   } else{
     $('#header-functions').show();
     $('#title-my-endowments').html("My Endowments");
@@ -46,6 +51,55 @@ function checkSession() {
 
     // checkPaymentAccount();
   }
+}
+
+function forgotPassword() {
+  var accounts = new Backbone.Collection;
+  accounts.url = window.serverUrl + 'api/donors/forgot_password.json';
+  data = { email: $( "input[name='Reset[email]']" ).val() }
+
+  $('#loader').show();
+  accounts.fetch({
+    type: "POST",
+    data: data,
+    success: function(response, xhr) {
+      response = JSON.parse(JSON.stringify(response));
+      $( "input[name='Reset[email]']" ).val("");
+
+      $.pnotify({
+        title: 'Yeah',
+        text: response[0].message,
+        type: 'success'
+      });
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse)
+    }
+  });
+}
+
+function resetPassword() {
+  var accounts = new Backbone.Collection;
+  accounts.url = window.serverUrl + 'api/donors/reset_password.json';
+  reset_token = window.location.search.split("?reset_token=")
+  data = { reset_token: reset_token[1] }
+
+  $('#loader').show();
+  accounts.fetch({
+    type: "GET",
+    data: data,
+    success: function(response, xhr) {
+      response = JSON.parse(JSON.stringify(response));
+      $.pnotify({
+        title: 'Yeah',
+        text: response[0].message,
+        type: 'success'
+      });
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse)
+    }
+  });
 }
 
 function checkSessionIndex() {
@@ -392,12 +446,12 @@ function signOut(){
       localStorage.clear();
       checkSession();
       getBalanceInformation();
-    // redirect("index.html");
-  },
-  error: function (errorResponse) {
-    console.log(errorResponse)
-  }
-});
+      // redirect("index.html");
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse)
+    }
+  });
 }
 
 function redirect(data){
