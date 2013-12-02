@@ -36,7 +36,7 @@ function checkSession() {
     var session = JSON.parse(localStorage.session);
     var name = session[0]['donor'].donor.name;
     $('.info .name').text(name);
-    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='statement.html'><i class='icol-blog'></i> Statement</a></li><li><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
+    $('.inner-nav').append("<li class='donor_profile'><a href='javascript:void(0)'><i class='icol-user'></i> Donor Profile</a></li><li class='statement'><a href='#'><i class='icol-blog'></i> Statement</a></li><li><a href='charities.html'><i class='icol-table'></i> Charities</a></li><li><a onclick='signOut();'><i class='icon-off'></i>Log Out</a></li>");
 
     if ((localStorage.data_endowment !== undefined) && (localStorage.charity_id !== undefined) && (localStorage.session !== undefined)) {
       createEndowment();
@@ -214,6 +214,7 @@ function getDonorStatement() {
 
   var payment_accounts = new Backbone.Collection;
   payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/all_donation_list.json';
+  // payment_accounts.url = window.serverUrl + 'api/donors/donations.json';
 
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
@@ -221,7 +222,7 @@ function getDonorStatement() {
       var profile = JSON.parse(localStorage.profile)[0]['donor'];
       var response = JSON.parse(JSON.stringify(response));
       window.mpit = response;
-      var count = Object.keys(response[0]).length
+      var count = Object.keys(response[0]).length;
       // localStorage.setItem('profile', JSON.stringify(response));
       // detailStatement(profile.id);
 
@@ -236,35 +237,21 @@ function getDonorStatement() {
         $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
       }
 
-      $.each(new Array(count), function(n){
-        var val = response[0][n+1];
-        window.aa = val
+      $.each(window.mpit, function(key, val){
+        console.log(key);
 
-        if (val !== undefined) {
-          var endowment = getDetailEndowment(val.donor_subscription.endowment_id);
-          // var enDetails = JSON.parse(localStorage.endowment_details)[0];
-          // $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name + "<br /><div style='margin-left: 15px;'><div style='float: left;'>Name: </div><div style='margin-left: 45px;'>" + window.val.donor_subscription.created_at +"</div></div></li><br />");
-          $('#donation-container').append("<li>Donations To: Endowment Name<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
-        }
-      }
-      );
-$.each(count, function(key, val) {
-  var val = val[0];
-        // var endowment = getEndowentById(val.donor_subscription.endowment_id);
-        if (val !== undefined) {
-          var endowment = getDetailEndowment(val.donor_subscription.endowment_id);
-          var enDetails = JSON.parse(localStorage.endowment_details)[0];
-          // console.log(enDetails.endowment.endowment.name);
-          // $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name + "<br /><div style='margin-left: 15px;'><div style='float: left;'>Name: </div><div style='margin-left: 45px;'>" + window.val.donor_subscription.created_at +"</div></div></li><br />");
-          $('#donation-container').append("<li>Donations To: Endowment Name<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
-        }
+        $.each(val, function(key, val){
+          console.log(val);
+          if (val !== undefined) {
+
+          }
+        })
       })
-
-},
-error: function (errorResponse) {
-  console.log(errorResponse);
-}
-});
+    },
+    error: function (errorResponse) {
+      console.log(errorResponse);
+    }
+  });
 }
 
 function getEndowentById(id) {
@@ -310,6 +297,8 @@ function detailProfile(id) {
 }
 
 function detailStatement(id) {
+  localStorage.setItem('detailStatement', true);
+
   var demos = {
     modalDialog: function( target, trigger ) {
       target.dialog({
@@ -670,7 +659,7 @@ function getEndowments(container) {
       } else {
         $.each(window.endowments, function(key, val) {
           val = val[0][Object.keys(val[0])[0]];
-
+          window.piti = val;
           container.append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment_name + "</span>" + val.endowment_donation_amount + "</span></a></li>");
         });
 
@@ -717,7 +706,10 @@ function addToEndowmentList(source, container) {
           $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
           // for donor statement
-          // $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name +"<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
+          // if (localStorage.detailStatement == "true") {
+          //   console.log("mpiiiiit")
+          //   $('#donation-container').append("<li>Donations To: "+ enDetails.endowment.endowment.name +"<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />");
+          // }
 
           memberCharityEndowment(val.endowment.charities, val.endowment.id);
 
@@ -822,6 +814,9 @@ function donateSubscription(id) {
           var enDetails = JSON.parse(localStorage.endowment_details)[0];
           checkPaymentAccont(id, enDetails);
         } else {
+          $('#form-donation-' + localStorage.idEndowment + ' .btn').attr('disabled', false);
+          $('#form-donation-' + localStorage.idEndowment + ' .btn').text('Make Donation')
+
           $.pnotify({
             title: 'Oops',
             text: response[0].message,
@@ -834,105 +829,105 @@ function donateSubscription(id) {
         window.errorResponse = console.log(errorResponse);
       }
     });
-  } else if (subscribe_plan == "onetime"){
-    $('#form-donation-' + localStorage.idEndowment + ' .btn').text('Loading...')
-    $('#form-donation-' + localStorage.idEndowment + ' .btn').attr('disabled', true);
+} else if (subscribe_plan == "onetime"){
+  $('#form-donation-' + localStorage.idEndowment + ' .btn').text('Loading...')
+  $('#form-donation-' + localStorage.idEndowment + ' .btn').attr('disabled', true);
 
-    if (localStorage.session == undefined) {
-      Stripe.setPublishableKey(window.stripePublishKey);
+  if (localStorage.session == undefined) {
+    Stripe.setPublishableKey(window.stripePublishKey);
 
-      var stripeResponseHandler = function(status, response) {
-        var $form = $('#payment-form-' + id);
+    var stripeResponseHandler = function(status, response) {
+      var $form = $('#payment-form-' + id);
 
-        if (response.error) {
-          $form.find('.payment-errors').text(response.error.message);
-          $form.find('button').prop('disabled', false);
-        } else {
-          var stripe_token = response.id;
-          console.log(stripe_token)
-          $form.append($('<input type="hidden" name="stripeToken" />').val(stripe_token));
+      if (response.error) {
+        $form.find('.payment-errors').text(response.error.message);
+        $form.find('button').prop('disabled', false);
+      } else {
+        var stripe_token = response.id;
+        console.log(stripe_token)
+        $form.append($('<input type="hidden" name="stripeToken" />').val(stripe_token));
 
-          var payment_accounts = new Backbone.Collection;
+        var payment_accounts = new Backbone.Collection;
 
-          payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
-          data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: $('#email-' + id).val(), stripeToken: stripe_token}
+        payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
+        data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: $('#email-' + id).val(), stripeToken: stripe_token}
 
-          $('#loader-donate-' + id).show();
+        $('#loader-donate-' + id).show();
 
-          payment_accounts.fetch({
-            data: data,
-            type: "POST",
-            success: function(response, xhr) {
-              response = JSON.parse(JSON.stringify(response));
-              if ((response[0].message) == "Success") {
-                $('#donor-modal-' + id).remove();
-                $('#dialog-modal-' + id).remove();
-                $('#loader-donate-' + id).hide();
-                $.pnotify({
-                  title: 'Yeah',
-                  text: "Successfully donate to this endowment.",
-                  type: 'success'
-                });
-              } else {
-                $.pnotify({
-                  title: 'Oops',
-                  text: response[0].message,
-                  type: 'error'
-                });
-              }
-
-            },
-            error: function (errorResponse) {
-              window.errorResponse = console.log(errorResponse);
+        payment_accounts.fetch({
+          data: data,
+          type: "POST",
+          success: function(response, xhr) {
+            response = JSON.parse(JSON.stringify(response));
+            if ((response[0].message) == "Success") {
+              $('#donor-modal-' + id).remove();
+              $('#dialog-modal-' + id).remove();
+              $('#loader-donate-' + id).hide();
+              $.pnotify({
+                title: 'Yeah',
+                text: "Successfully donate to this endowment.",
+                type: 'success'
+              });
+            } else {
+              $.pnotify({
+                title: 'Oops',
+                text: response[0].message,
+                type: 'error'
+              });
             }
+
+          },
+          error: function (errorResponse) {
+            window.errorResponse = console.log(errorResponse);
+          }
+        });
+      }
+    };
+
+    var $form = $('#payment-form-' + id);
+    Stripe.createToken($form, stripeResponseHandler);
+  } else {
+    var session = JSON.parse(localStorage.session);
+    var token = session[0]['session']['session'].token;
+    var payment_accounts = new Backbone.Collection;
+
+    payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
+    data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: session[0]['donor'].donor.email, payment_account_id: window.payment_account_id, password: $('#input-password-one-time').val() }
+
+    $('#loader-donate').show();
+
+    payment_accounts.fetch({
+      headers: {'Authorization' :'Token token=' + token},
+      data: data,
+      type: "POST",
+      success: function(response, xhr) {
+        response = JSON.parse(JSON.stringify(response));
+        if ((response[0].message) == "Success") {
+          $('#donor-modal-' + id).remove()
+          $('#loader-donate').hide();
+          $.pnotify({
+            title: 'Yeah',
+            text: "Successfully donate to this endowment.",
+            type: 'success'
+          });
+
+          var enDetails = JSON.parse(localStorage.endowment_details)[0];
+          checkPaymentAccont(id, enDetails);
+        } else {
+          $.pnotify({
+            title: 'Oops',
+            text: response[0].message,
+            type: 'error'
           });
         }
-      };
 
-      var $form = $('#payment-form-' + id);
-      Stripe.createToken($form, stripeResponseHandler);
-    } else {
-      var session = JSON.parse(localStorage.session);
-      var token = session[0]['session']['session'].token;
-      var payment_accounts = new Backbone.Collection;
-
-      payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/one_time_payment.json';
-      data = { amount: $('#donor_amount_' + id).val(), endowment_id: id, email: session[0]['donor'].donor.email, payment_account_id: window.payment_account_id, password: $('#input-password-one-time').val() }
-
-      $('#loader-donate').show();
-
-      payment_accounts.fetch({
-        headers: {'Authorization' :'Token token=' + token},
-        data: data,
-        type: "POST",
-        success: function(response, xhr) {
-          response = JSON.parse(JSON.stringify(response));
-          if ((response[0].message) == "Success") {
-            $('#donor-modal-' + id).remove()
-            $('#loader-donate').hide();
-            $.pnotify({
-              title: 'Yeah',
-              text: "Successfully donate to this endowment.",
-              type: 'success'
-            });
-
-            var enDetails = JSON.parse(localStorage.endowment_details)[0];
-            checkPaymentAccont(id, enDetails);
-          } else {
-            $.pnotify({
-              title: 'Oops',
-              text: response[0].message,
-              type: 'error'
-            });
-          }
-
-        },
-        error: function (errorResponse) {
-          window.errorResponse = console.log(errorResponse);
-        }
-      });
-    }
+      },
+      error: function (errorResponse) {
+        window.errorResponse = console.log(errorResponse);
+      }
+    });
   }
+}
 }
 
 function selectPaymentAccount(id) {
@@ -1038,6 +1033,8 @@ function getDetailEndowment(id) {
       // window.endowment = JSON.parse(result);
       // localStorage.setItem('endowment_details', JSON.parse(result));
       localStorage.setItem('endowment_details', JSON.stringify(response));
+
+      // $('#donation-container').append("<li>Donations To: Endowment "+ response +"<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />")
     },
     error: function (errorResponse) {
       localStorage.setItem('endowment_details', "");
