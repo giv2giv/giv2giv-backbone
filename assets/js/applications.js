@@ -582,6 +582,35 @@ function createEndowment(){
 
             $('#loader').hide();
             localStorage.setItem('endowment_id', JSON.stringify(response));
+            var val = JSON.parse(localStorage.endowment_id)[0];
+
+            var enDetails = JSON.parse(localStorage.endowment_details)[0];
+            if (enDetails.my_balances !== undefined) {
+              memberCharityEndowment(val.endowment.charities, val.endowment.id);
+
+              if (localStorage.session !== undefined) {
+                checkPaymentAccont(val.endowment.id, enDetails);
+                selectPaymentAccount(val.endowment.id);
+              }
+            }
+
+            $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><div id='plan-"+ val.endowment.id +"'></div><br /><div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><br /><br /><a class='btn btn-success' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a><div id='loader-donate-"+ val.endowment.id +"' style='display: none; float: right;'><img src='assets/images/preloaders/8.gif' alt=''></div></form></div>");
+
+            $('#plan-' + val.endowment.id).html("<br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<br />");
+
+            console.log("popopooooooo");
+            $('input[name=time]', '#form-donation-' + val.endowment.id).click(function() {
+              if ($('input[name=time]:checked').val() == 'onetime') {
+                $('#plan-' + val.endowment.id).append("<br /><input type='password' placeholder='Password' name='[password]' id='input-password-one-time' class='big required'>")
+              } else {
+                $('#plan-' + val.endowment.id + '> input[id=input-password-one-time]').remove();
+              }
+            });
+
+            $('#selected-payment-account-' + val.endowment.id).change(function() {
+              window.payment_account_id = $(this).val();
+            });
+
             $('.form-actions').find('button:contains(Next)').click();
 
             $.pnotify({
@@ -595,12 +624,12 @@ function createEndowment(){
           }
         });
 
-        localStorage.removeItem('charity_id');
-        localStorage.removeItem('data_endowment');
-        localStorage.removeItem('endowment_id')
-      }
-    }
-  }
+localStorage.removeItem('charity_id');
+localStorage.removeItem('data_endowment');
+localStorage.removeItem('endowment_id')
+}
+}
+}
 }
 
 function creatingEndowment(data, token) {
@@ -662,16 +691,61 @@ function getEndowments(container) {
         $.each(window.endowments, function(key, val) {
           val = val[0][Object.keys(val[0])[0]];
           window.piti = val;
+          // container.append("<li id='button-modal-"+ val.endowment['id'] +"'><a href='#' onclick='detailEndowment("+ val.endowment_name +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment_name + "</span>0</span></a></li>");
           container.append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment_name + "</span>" + val.endowment_donation_amount + "</span></a></li>");
+
+          getDetailEndowment(val.endowment.id);
+          if (localStorage.endowment_details !== undefined) {
+            var enDetails = JSON.parse(localStorage.endowment_details)[0];
+            if (enDetails.my_balances !== undefined) {
+              $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
+
+              memberCharityEndowment(val.endowment.charities, val.endowment.id);
+
+              if (localStorage.session !== undefined) {
+                checkPaymentAccont(val.endowment.id, enDetails);
+                selectPaymentAccount(val.endowment.id);
+              } else {
+                $('#donation-status-'+ val.endowment.id).append("<a id='donor-button-modal-"+ val.endowment.id +"' class='btn add-charity' onclick='donateEndowment("+ val.endowment.id +");' href='javascript:void(0)'>Donate Now!</a><br/><br/>");
+
+                $('#donor-button-modal-' + val.endowment.id).click();
+              }
+
+              $('#donor-endowment').append("<div id='donor-modal-"+ val.endowment.id +"'>Donate to <b>"+ val.endowment.name +"</b><br /><br /><form id='form-donation-"+ val.endowment.id +"' class='form-horizontal' method='post'><input type='text' name='donor[amount]' id='donor_amount_"+ val.endowment.id +"' placeholder='Amount'/><br/><div id='plan-"+ val.endowment.id +"'></div><br /><div id='select-payment-account-"+ val.endowment.id +"'><select id='selected-payment-account-" + val.endowment.id + "'><option>Select Payment Account</option></select></div><br /><br /><a class='btn btn-success' onclick='donateSubscription("+ val.endowment.id +");' href='javascript:void(0)'>Make Donation</a><div id='loader-donate-"+ val.endowment.id +"' style='display: none; float: right;'><img src='assets/images/preloaders/8.gif' alt=''></div></form></div>");
+
+              if (localStorage.session == undefined) {
+                $('#plan-' + val.endowment.id).html("<br/><input type='radio' name='time' value='month' disabled>Per Month<br><input type='radio' name='time' value='week' disabled>Per Week<br><input type='radio' name='time' value='onetime' checked='checked'>One Time<br />");
+
+                $('#select-payment-account-' + val.endowment.id).html("<form action='' method='POST' id='payment-form-"+ val.endowment.id +"'><span class='payment-errors'></span><div class='form-row'><input type='text' size='20' data-stripe='number' value='4242424242424242' placeholder='Card Number' /></div><div class='form-row'><input type='text' size='4' data-stripe='cvc' value='314' placeholder='CCV' /></div><div class='form-row'><input type='text' size='2' data-stripe='exp-month' value='9' placeholder='MM' style='width: 15%;' /><input type='text' size='4' data-stripe='exp-year' value='2014'  placeholder='YYYY' style='float: right; margin-right: 50px; width: 55%;' /></div><div class='form-row'><input id='email-"+ val.endowment.id +"' type='text' size='4' value='' placeholder='Email' /></div></form>")
+              } else {
+                $('#plan-' + val.endowment.id).html("<br/><input type='radio' name='time' value='month'>Per Month<br><input type='radio' name='time' value='week'>Per Week<br><input type='radio' name='time' value='onetime'>One Time<br />");
+
+                $('input[name=time]', '#form-donation-' + val.endowment.id).click(function() {
+                  if ($('input[name=time]:checked').val() == 'onetime') {
+                    $('#plan-' + val.endowment.id).append("<br /><input type='password' placeholder='Password' name='[password]' id='input-password-one-time' class='big required'>")
+                  } else {
+                    $('#plan-' + val.endowment.id + '> input[id=input-password-one-time]').remove();
+                  }
+                });
+
+            // cek payment account
+
+            $('#selected-payment-account-' + val.endowment.id).change(function() {
+              window.payment_account_id = $(this).val();
+            });
+          }
+        }
+      }
+
+          // addToEndowmentList(JSON.stringify(response), container);
         });
 
-        // addToEndowmentList(JSON.stringify(response), container);
-      }
-    },
-    error: function (errorResponse) {
-      console.log(errorResponse);
-    }
-  });
+}
+},
+error: function (errorResponse) {
+  console.log(errorResponse);
+}
+});
 }
 
 function getFeaturedEndowments(container) {
