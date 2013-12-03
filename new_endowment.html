@@ -215,7 +215,7 @@
                         <div class="control-group">
                           <label class="control-label">Endowment created!</label>
                           <br />
-                          <a class="btn add-charity" onclick="" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Schedule Donations</a>
+                          <a class="btn add-charity" style="position: relative;display:block;margin:0 auto;width: 262px;" id="schedule-donations" href="javascript:void(0)">Schedule Donations</a>
                           <br />
                           <a class="btn add-charity" onclick="goToDashboard();" style="position: relative;display:block;margin:0 auto;width: 262px;" href="javascript:void(0)">Skip this step & return to dashboard</a>
                         </div>
@@ -224,6 +224,14 @@
                   </div>
 
                 </div>
+
+                <!-- <ul class="stats-container" id="container-my-endowments"></ul> -->
+<!--
+                <h3 id="title-featured-endowments"></h3>
+                <ul class="stats-container" id="container-featured-endowments"></ul>
+
+                <ul id="endowment-details" style="display: none;"></ul> -->
+                <div id="donor-endowment" style="display: none;"></div>
 
               </div>
             </div>
@@ -300,6 +308,14 @@ $(document).ready(function() {
     if(event.keyCode == 13){
       $(".endowment-first-step").click();
     }
+  });
+
+  $("#schedule-donations").click(function(event){
+    var val = JSON.parse(localStorage.endowment_id)[0];
+    console.log("yayayyayayaaaaa");
+    $('#donor-modal-' + val.endowment.id).dialog();
+
+    // donateEndowment(endowment[0].endowment.id);
   });
 });
 </script>
