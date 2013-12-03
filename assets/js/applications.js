@@ -208,7 +208,6 @@ function getProfile(){
 }
 
 function getDonorStatement() {
-  //mpit
   var session = JSON.parse(localStorage.session);
   var token = session[0]['session']['session'].token;
 
@@ -221,32 +220,33 @@ function getDonorStatement() {
     success: function(response,xhr) {
       var profile = JSON.parse(localStorage.profile)[0]['donor'];
       var response = JSON.parse(JSON.stringify(response));
-      window.mpit = response;
-      var count = Object.keys(response[0]).length;
-      // localStorage.setItem('profile', JSON.stringify(response));
-      // detailStatement(profile.id);
+      if (response.length !== 0) {
+        var count = Object.keys(response[0]).length;
+        // localStorage.setItem('profile', JSON.stringify(response));
+        // detailStatement(profile.id);
 
-      $('.statement').html("<a id='button-statement-"+ profile.id +"' onclick='detailStatement("+ profile.id +");'><i class='icol-blog'></i> Statement</a>");
+        $('.statement').html("<a id='button-statement-"+ profile.id +"' onclick='detailStatement("+ profile.id +");'><i class='icol-blog'></i> Statement</a>");
 
-      $('#button-statement-'+ profile.id).click();
+        $('#button-statement-'+ profile.id).click();
 
-      if (count == 0) {
-        $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'>No More Donations</ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+        if (count == 0) {
+          $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'>No More Donations</ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
 
-      } else {
-        $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
-      }
+        } else {
+          $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+        }
 
-      $.each(window.mpit, function(key, val){
-        console.log(key);
+        $.each(response, function(key, val){
+          console.log(key);
 
-        $.each(val, function(key, val){
-          console.log(val);
-          if (val !== undefined) {
+          $.each(val, function(key, val){
+            console.log(val);
+            if (val !== undefined) {
 
-          }
+            }
+          })
         })
-      })
+      };
     },
     error: function (errorResponse) {
       console.log(errorResponse);
