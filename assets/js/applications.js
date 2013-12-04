@@ -1,8 +1,12 @@
 window.indexUrl = "http://localhost/giv2giv-jquery/";
+// window.indexUrl = "https://www.giv2giv.org/endowments/";
 // window.indexUrl = "http://www.giv2giv.org/giv2giv-jquery/";
+
 window.serverUrl = "http://localhost:3000/";
 window.stripePublishKey = "pk_test_ys65GDVxkAM0Ej8fwpDItB2s"
+
 // window.serverUrl = "https://api.giv2giv.org/";
+// window.stripePublishKey = "pk_test_d678rStKUyF2lNTZ3MfuOoHy"
 
 $(document).ready(function() {
 });
@@ -772,13 +776,13 @@ function getFeaturedEndowments(container) {
 function addToEndowmentList(source, container) {
   $.each(JSON.parse(source), function(key, val) {
     if (val.endowment !== undefined) {
-      container.append("<li id='button-modal-"+ val.endowment['id'] +"'><a href='#' onclick='detailEndowment("+ val.endowment['id'] +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment['name'] + "</span>0</span></a></li>");
-
-
-      getDetailEndowment(val.endowment.id);
       if (localStorage.endowment_details !== undefined) {
         var enDetails = JSON.parse(localStorage.endowment_details)[0];
         if (enDetails.my_balances !== undefined) {
+          container.append("<li id='button-modal-"+ val.endowment['id'] +"'><a href='#' onclick='detailEndowment("+ val.endowment['id'] +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment['name'] + "</span>"+ enDetails.global_balances.endowment_balance +"</span></a></li>");
+
+          getDetailEndowment(val.endowment.id);
+
           $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
           // for donor statement
