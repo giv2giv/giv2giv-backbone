@@ -10,6 +10,12 @@ window.stripePublishKey = "pk_test_d678rStKUyF2lNTZ3MfuOoHy"
 $(document).ready(function() {
 });
 
+function checkContainerVisibility() {
+  if ($('#public').is(":checked") || $('#private').is(":checked")) {
+    $('#container-visibility').addClass("success");
+  };
+}
+
 function checkSession() {
   if(localStorage.session == null){
     $('#header-functions').hide();

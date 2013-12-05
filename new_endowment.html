@@ -157,14 +157,25 @@
                               <input type="text" name="endowment[minimum_donation_amount]" class="required" id="minimum_donation_amount" data-accept="numbers"/>
                             </div>
                           </div>
-                          <div class="control-group">
+
+                          <!-- <div class="control-group">
+                            <label class="control-label">Gender <span class="required">*</span></label>
+                            <div class="controls">
+                              <label class="radio"><input type="radio" name="wizard[gender]" class="required"> Male</label>
+                              <label class="radio"><input type="radio" name="wizard[gender]" class="required"> Female</label>
+                              <label for="wizard[gender]" class="error" generated="true" style="display:none"></label>
+                            </div>
+                          </div> -->
+
+                          <div class="control-group" id="container-visibility">
                             <label class="control-label">Visibility <span class="required">*</span></label>
                             <div class="controls">
-                              <label class="radio"><input type="radio" name="endowment[visibility]" class="required" id= "public"> Public</label>
-                              <label class="radio"><input type="radio" name="endowment[visibility]" class="required" id= "private"> Private</label>
+                              <label class="radio"><input type="radio" name="endowment[visibility]" class="required" id="public" onclick="checkContainerVisibility()"> Public</label>
+                              <label class="radio"><input type="radio" name="endowment[visibility]" class="required" id="private" onclick="checkContainerVisibility()"> Private</label>
                               <label for="endowment[visibility]" class="error" generated="true" style="display:none"></label>
                             </div>
                           </div>
+
                           <div class="control-group">
                             <label class="control-label" for="input02">Description</label>
                             <div class="controls">
@@ -293,7 +304,10 @@
 <script src="plugins/pnotify/jquery.pnotify.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-  checkSession();
+  // checkSession();
+  getProfile();
+  showAllPaymentAccount();
+  getDonorStatement();
   searchCharities();
 
   $("#wizard-demo-2").submit(function(event){
