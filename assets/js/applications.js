@@ -788,7 +788,7 @@ function addToEndowmentList(source, container) {
       if (localStorage.endowment_details !== undefined) {
         var enDetails = JSON.parse(localStorage.endowment_details)[0];
         if (enDetails.my_balances !== undefined) {
-          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
+          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>0.0</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
           // for donor statement
           // if (localStorage.detailStatement == "true") {
