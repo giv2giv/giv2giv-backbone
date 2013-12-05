@@ -221,14 +221,16 @@ function getDonorStatement() {
   var token = session[0]['session']['session'].token;
 
   var payment_accounts = new Backbone.Collection;
-  payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/all_donation_list.json';
-  // payment_accounts.url = window.serverUrl + 'api/donors/donations.json';
+  // payment_accounts.url = window.serverUrl + 'api/donors/payment_accounts/all_donation_list.json';
+  payment_accounts.url = window.serverUrl + 'api/donors/donations.json';
 
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
+    data: { start_date: "2012-01-01" },
     success: function(response,xhr) {
       var profile = JSON.parse(localStorage.profile)[0]['donor'];
       var response = JSON.parse(JSON.stringify(response));
+      window.mpit = response;
       if (response.length !== 0) {
         var count = Object.keys(response[0]).length;
         // localStorage.setItem('profile', JSON.stringify(response));
@@ -238,12 +240,20 @@ function getDonorStatement() {
 
         $('#button-statement-'+ profile.id).click();
 
+        // mpot
         if (count == 0) {
-          $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div id='invoice-toolbar' class='btn-toolbar'><div class='btn-group'><button type='button' id='invoice-print' class='btn'><i class='icol-printer'></i> Print Invoice</button></div></div><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'>No More Donations</ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+          $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div id='invoice-toolbar' class='btn-toolbar'><div class='btn-group'><button type='button' id='invoice-print' class='btn'><i class='icol-printer'></i> Print Invoice</button></div></div><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'>No More Donations</ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ "+ response[0].total +"</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
 
         } else {
-          $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div id='invoice-toolbar' class='btn-toolbar'><div class='btn-group'><button type='button' id='invoice-print' class='btn'><i class='icol-printer'></i> Print Invoice</button></div></div><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ 0.0</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
+          $('#donor-statement-details').html("<div id='donor-statement-modal' href='#'><div id='invoice-toolbar' class='btn-toolbar'><div class='btn-group'><button type='button' id='invoice-print' class='btn'><i class='icol-printer'></i> Print Invoice</button></div></div><div class='invoice paper-stack'><div class='invoice-header clearfix'><div class='invoice-logo'><img src='assets/images/logo.png' alt=''></div><div class='invoice-company'>Giv2Giv<br>190 Doe Hill Drive<br>Churchville VA<br>24421<br></div></div><div class='invoice-sub clearfix'><div class='invoice-to'><span class='invoice-caption'></span><b>Print Statement for Year : </b><span><select name='year'><option value='2013'>2013</option><option value='2014'>2014</option></select></span><br><br><b>Donor Name: </b><span>" + profile.name + "</span><br><b>Email: </b><span>" + profile.email + "</span><br><b>Address: </b><span>" + profile.email + "</span><br><b>City, State, Zip: </b><span>" + profile.city + " " + profile.state + " " + profile.zip + "</span><br></div><div class='invoice-info'><span class='invoice-caption'></span><ul><li>Statement Print Date <span>October 25, 2012</span></li></ul></div></div><div class='invoice-content clearfix'><ul style='list-style: none; margin-top: 15px;' id='donation-container'></ul><div class='invoice-total'><span>Total Donations in 2013:</span> $ "+ response[0].total +"</div></div><div style='width: 70%; padding: 10px;'>Giv2Giv is a 501(c)(3) charitable organization. No goods or services were provided to you by Giv2Giv in exchange for your donation. This donation may be claimed for a deduction from your U.S. taxes. Please consult with your tax counsel regarding the deductibility rules that apply to your specific tax situation.</div></div></div>");
         }
+
+        window.lili = response[0];
+        $.each(response[0].donations, function(key, val) {
+          // window.lolo = val;
+          getEndowentById(val, response[0].total);
+        });
+
 
         $('#invoice-print').on('click', function() { window.print(); });
       };
@@ -254,17 +264,19 @@ function getDonorStatement() {
   });
 }
 
-function getEndowentById(id) {
+function getEndowentById(val, total) {
   var session = JSON.parse(localStorage.session);
   var token = session[0]['session']['session'].token;
 
   var payment_accounts = new Backbone.Collection;
-  payment_accounts.url = window.serverUrl + 'api/endowment/'+ id +'.json';
+  payment_accounts.url = window.serverUrl + 'api/endowment/'+ val.donation.endowment_id +'.json';
 
   payment_accounts.fetch({
     headers: {'Authorization' :'Token token=' + token},
     success: function(response, xhr) {
-      JSON.parse(JSON.strigify(response));
+      data = JSON.parse(JSON.stringify(response));
+
+      $('#donation-container').append("<li>Donations To: "+ data[0].endowment.endowment.name +"<br /><div style='margin-left: 15px;'><div style='float: left;'>"+ val.donation.created_at +" </div><div style='margin-left: 45px;'> $"+ val.donation.gross_amount +"</div></div><div style='margin-left: 45px;'>Total Donated to "+ data[0].endowment.endowment.name +": "+ total +"</div></li><br />");
     },
     error: function (errorResponse) {
       console.log(errorResponse);
@@ -698,10 +710,19 @@ function getEndowments(container) {
         container.append("<li><a href='#' class='stat summary'><span class='digit'><span class='text'>No Subscribed Endowment</span></span></a></li>");
       } else {
         $.each(window.endowments, function(key, val) {
-          val = val[0][Object.keys(val[0])[0]];
-          window.piti = val;
+
+          $.each(Object.keys(window.endowments), function( index, value ) {
+            // console.log( value );
+            var val = window.endowments[value]
+            data = val[0][Object.keys(val[0])[0]];
+            // console.log( val[0][Object.keys(val[0])[0]] );
+            container.append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + data.endowment_name + "</span>" + data.endowment_donation_amount + "</span></a></li>");
+          });
+
+
+          // val = val[0][Object.keys(val[0])[0]];
+          // window.piti = val;
           // container.append("<li id='button-modal-"+ val.endowment['id'] +"'><a href='#' onclick='detailEndowment("+ val.endowment_name +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment_name + "</span>0</span></a></li>");
-          container.append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment_name + "</span>" + val.endowment_donation_amount + "</span></a></li>");
 
           getDetailEndowment(val.endowment.id);
           if (localStorage.endowment_details !== undefined) {
