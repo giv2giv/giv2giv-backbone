@@ -752,9 +752,43 @@ function addToMyEndowmentList(source, container) {
       var val = source[value]
       data = val[0][Object.keys(val[0])[0]];
       window.dato = data;
-      container.append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + data.endowment_name + "</span>" + data.endowment_donation_amount + "</span></a></li>");
+
+      container.append("<li id='button-modal-my-endowment-"+ val.endowment_id +"'><a href='#' onclick='detailMyEndowment("+ data.endowment_id +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + data.endowment_name + "</span><span>"+ data.endowment_donation_amount +"</span></span></a></li>");
+
+      $('#my-endowment-details').append("<div id='dialog-modal-my-endowment-"+ data.endowment_id +"'><p style='text-align: right;'>Endowment Name: <b>"+ data.endowment_name +"</b></p><br /></div>");
+      // $('#my-endowment-details').append("<div id='dialog-modal-my-endowment-"+ val.endowment_id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>0.0</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment_id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><hr/><div id='member_charities-"+ val.endowment_id +"'><br/></div></div>");
+
+      // container.append("<li><a href='#' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + data.endowment_name + "</span>" + data.endowment_donation_amount + "</span></a></li>");
     });
-  }
+}
+}
+
+function getDetailMyEndowment(id) {
+  $('#endowment_id').text(localStorage.idEndowment);
+  var endowments = new Backbone.Collection;
+  endowments.url = window.serverUrl + 'api/endowment/' + id + '.json';
+  endowments.fetch({
+    success: function(response, xhr) {
+      // window.endowment = JSON.parse(result);
+      // localStorage.setItem('endowment_details', JSON.parse(result));
+      localStorage.setItem('endowment_details', JSON.stringify(response));
+      localStorage.setItem('endowment_details_' + id, JSON.stringify(response));
+
+      var balance = JSON.parse(JSON.stringify(response))[0].global_balances;
+      $('#balance-' + id).text(balance.endowment_balance);
+      $('#giv2giv-data-' + id).html("<p>giv2giv Donations: <b>"+ balance.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ balance.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ balance.endowment_balance +"</b></p>");
+
+    },
+    error: function (errorResponse) {
+      // localStorage.setItem('endowment_details', "");
+      console.log(errorResponse);
+      console.log("Failed");
+    }
+  });
+}
+
+function detailMyEndowment(id) {
+  $('#dialog-modal-my-endowment-'+ id).dialog();
 }
 
 function getFeaturedEndowments(container) {
