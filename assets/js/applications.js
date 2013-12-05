@@ -461,6 +461,7 @@ function signOut(){
       localStorage.clear();
       checkSession();
       getBalanceInformation();
+      getFeaturedEndowments($('#container-featured-endowments'));
       // redirect("index.html");
     },
     error: function (errorResponse) {
@@ -701,7 +702,7 @@ function getEndowments(container) {
           if (localStorage.endowment_details !== undefined) {
             var enDetails = JSON.parse(localStorage.endowment_details)[0];
             if (enDetails.my_balances !== undefined) {
-              $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
+              $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
               memberCharityEndowment(val.endowment.charities, val.endowment.id);
 
@@ -775,14 +776,25 @@ function getFeaturedEndowments(container) {
 function addToEndowmentList(source, container) {
   $.each(JSON.parse(source), function(key, val) {
     if (val.endowment !== undefined) {
-      container.append("<li id='button-modal-"+ val.endowment['id'] +"'><a href='#' onclick='detailEndowment("+ val.endowment['id'] +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment['name'] + "</span>0</span></a></li>");
-
-
       getDetailEndowment(val.endowment.id);
+      // var data = JSON.parse(localStorage.getItem('endowment_details_' + val.endowment.id))[0];
+      // console.log(data.global_balances.endowment_balance);
+
+      // console.log(JSON.parse(localStorage.getItem('endowment_details_' + val.endowment.id))[0])
+      // var balance = JSON.parse(localStorage.getItem('endowment_details_' + val.endowment.id))[0].global_balances.endowment_balance;
+
+      // if ((localStorage.getItem('endowment_details_' + val.endowment.id) !== undefined) && (localStorage.getItem('endowment_details_' + val.endowment.id) !== null)) {
+      //   console.log("-----------------------")
+      //   console.log(localStorage.getItem('endowment_details_' + val.endowment.id))
+      // };
+
+      container.append("<li id='button-modal-"+ val.endowment.id +"'><a href='#' onclick='detailEndowment("+ val.endowment.id +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment.name + "</span><span id='balance-"+ val.endowment.id +"'>-</span></span></a></li>");
+      console.log(val.endowment);
+
       if (localStorage.endowment_details !== undefined) {
         var enDetails = JSON.parse(localStorage.endowment_details)[0];
         if (enDetails.my_balances !== undefined) {
-          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><p>giv2giv Donations: <b>"+ enDetails.global_balances.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ enDetails.global_balances.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ enDetails.global_balances.endowment_balance +"</b></p><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
+          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>"+ '-' +"</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
           // for donor statement
           // if (localStorage.detailStatement == "true") {
@@ -827,6 +839,31 @@ function addToEndowmentList(source, container) {
           });
         }
       }
+    }
+  });
+}
+
+function getDetailEndowment(id) {
+  $('#endowment_id').text(localStorage.idEndowment);
+  var endowments = new Backbone.Collection;
+  endowments.url = window.serverUrl + 'api/endowment/' + id + '.json';
+  endowments.fetch({
+    success: function(response, xhr) {
+      // window.endowment = JSON.parse(result);
+      // localStorage.setItem('endowment_details', JSON.parse(result));
+      localStorage.setItem('endowment_details', JSON.stringify(response));
+      localStorage.setItem('endowment_details_' + id, JSON.stringify(response));
+
+      var balance = JSON.parse(JSON.stringify(response))[0].global_balances;
+      $('#balance-' + id).text(balance.endowment_balance);
+      $('#giv2giv-data-' + id).html("<p>giv2giv Donations: <b>"+ balance.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ balance.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ balance.endowment_balance +"</b></p>");
+
+      // $('#donation-container').append("<li>Donations To: Endowment "+ response +"<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />")
+    },
+    error: function (errorResponse) {
+      // localStorage.setItem('endowment_details', "");
+      console.log(errorResponse);
+      console.log("Failed");
     }
   });
 }
@@ -1100,26 +1137,6 @@ function detailEndowment(id) {
   // $('#dialog-modal-'+id).dialog( 'open' );
   localStorage.setItem('idEndowment', id);
   // redirect("endowment_details.html");
-}
-
-function getDetailEndowment(id) {
-  $('#endowment_id').text(localStorage.idEndowment);
-  var endowments = new Backbone.Collection;
-  endowments.url = window.serverUrl + 'api/endowment/' + id + '.json';
-
-  endowments.fetch({
-    success: function(response, xhr) {
-      // window.endowment = JSON.parse(result);
-      // localStorage.setItem('endowment_details', JSON.parse(result));
-      localStorage.setItem('endowment_details', JSON.stringify(response));
-
-      // $('#donation-container').append("<li>Donations To: Endowment "+ response +"<br /><div style='margin-left: 15px;'><div style='float: left;'>Date 1</div><div style='margin-left: 45px;'>Amount 1</div></div><div style='margin-left: 15px;'><div style='float: left;'>Date 2</div><div style='margin-left: 45px;'>Amount 2</div></div><div style='margin-left: 45px;'>Total Donated to Endowment Name: 0.0</div></li><br />")
-    },
-    error: function (errorResponse) {
-      localStorage.setItem('endowment_details', "");
-      console.log(errorResponse);
-    }
-  });
 }
 
 function showAllPaymentAccount() {
