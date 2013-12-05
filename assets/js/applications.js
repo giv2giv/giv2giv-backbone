@@ -246,17 +246,6 @@ function getDonorStatement() {
         }
 
         $('#invoice-print').on('click', function() { window.print(); });
-
-        $.each(response, function(key, val){
-          console.log(key);
-
-          $.each(val, function(key, val){
-            console.log(val);
-            if (val !== undefined) {
-
-            }
-          })
-        })
       };
     },
     error: function (errorResponse) {
@@ -503,32 +492,42 @@ function createEndowment(){
     var charity_id = JSON.parse(localStorage.charity_id);
 
     // creatingEndowment(JSON.parse(localStorage.data_endowment), token);
-    var endowments = new Backbone.Collection;
-    endowments.url = window.serverUrl + 'api/endowment.json';
 
-    $('#loader').show();
-    endowments.fetch({
-      headers: {'Authorization' :'Token token=' + token},
-      data: JSON.parse(localStorage.data_endowment),
-      type: "POST",
-      success: function(response,xhr) {
-        $('#loader').hide();
-        localStorage.setItem('endowment_id', JSON.stringify(response));
+    if (charity_id.length == 0) {
+      $.pnotify({
+        title: 'Oops!',
+        text: "Please select charities first.",
+        type: 'error'
+      });
+    } else {
+      var endowments = new Backbone.Collection;
+      endowments.url = window.serverUrl + 'api/endowment.json';
 
-        var endowment_id = JSON.parse(localStorage.endowment_id);
-        addCharityToGroup(endowment_id, charity_id, token);
+      $('#loader').show();
+      endowments.fetch({
+        headers: {'Authorization' :'Token token=' + token},
+        data: JSON.parse(localStorage.data_endowment),
+        type: "POST",
+        success: function(response,xhr) {
+          $('#loader').hide();
+          localStorage.setItem('endowment_id', JSON.stringify(response));
 
-        $.pnotify({
-          title: 'Yeah',
-          text: "Successfully to create endowment.",
-          type: 'success'
-        });
+          var endowment_id = JSON.parse(localStorage.endowment_id);
+          addCharityToGroup(endowment_id, charity_id, token);
 
-      },
-      error: function (errorResponse) {
-        console.log(errorResponse);
-      }
-    });
+          $.pnotify({
+            title: 'Yeah',
+            text: "Successfully to create endowment.",
+            type: 'success'
+          });
+
+        },
+        error: function (errorResponse) {
+          console.log(errorResponse);
+        }
+      });
+    }
+
 
     localStorage.removeItem('charity_id');
     localStorage.removeItem('data_endowment');
