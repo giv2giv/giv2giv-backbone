@@ -783,19 +783,8 @@ function addToEndowmentList(source, container) {
   $.each(JSON.parse(source), function(key, val) {
     if (val.endowment !== undefined) {
       getDetailEndowment(val.endowment.id);
-      // var data = JSON.parse(localStorage.getItem('endowment_details_' + val.endowment.id))[0];
-      // console.log(data.global_balances.endowment_balance);
-
-      // console.log(JSON.parse(localStorage.getItem('endowment_details_' + val.endowment.id))[0])
-      // var balance = JSON.parse(localStorage.getItem('endowment_details_' + val.endowment.id))[0].global_balances.endowment_balance;
-
-      // if ((localStorage.getItem('endowment_details_' + val.endowment.id) !== undefined) && (localStorage.getItem('endowment_details_' + val.endowment.id) !== null)) {
-      //   console.log("-----------------------")
-      //   console.log(localStorage.getItem('endowment_details_' + val.endowment.id))
-      // };
 
       container.append("<li id='button-modal-"+ val.endowment.id +"'><a href='#' onclick='detailEndowment("+ val.endowment.id +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + val.endowment.name + "</span><span id='balance-"+ val.endowment.id +"'>-</span></span></a></li>");
-      console.log(val.endowment);
 
       if (localStorage.endowment_details !== undefined) {
         var enDetails = JSON.parse(localStorage.endowment_details)[0];
