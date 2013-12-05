@@ -190,7 +190,7 @@
                         </fieldset>
 
                         <fieldset class="wizard-step">
-                          <legend class="wizard-label"><i class="icon-user"></i> Add Charity to Endowment</legend>
+                          <legend class="wizard-label" id="charity-header"><i class="icon-user"></i> Add Charity to Endowment</legend>
                           <!-- <div class="control-group">
                             <label class="control-label" for="input02">Charities</label>
                             <div class="controls">
@@ -201,7 +201,7 @@
                           <div class="control-group">
                             <label class="control-label" for="input02">Charities</label>
                             <div class="controls">
-                              <input type="text" name="query" class="span12" id="query">
+                              <input type="text" name="query" class="required span12" id="query">
                               <!-- <select id="input20" class="select2-select-00 span12" multiple size="5" data-placeholder="Select Charities"> -->
                             </select>
                           </div>
@@ -222,7 +222,7 @@
                       </fieldset>
 
                       <fieldset class="wizard-step">
-                        <legend class="wizard-label"><i class="icon-ok"></i> Subscribe/ Donate Page</legend>
+                        <legend class="wizard-label"><a onclick="createEndowment();" href="javascript:void(0)"><i class="icon-ok"></i> Subscribe/ Donate Page</a></legend>
                         <div class="control-group">
                           <label class="control-label">Endowment created!</label>
                           <br />
