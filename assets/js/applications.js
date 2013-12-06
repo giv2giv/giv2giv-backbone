@@ -752,9 +752,9 @@ function addToMyEndowmentList(source, container) {
       window.dato = data;
 
       getDetailMyEndowment(data.endowment_id);
-      container.append("<li id='button-modal-my-endowment-"+ val.endowment_id +"'><a href='javascript:void(0)' onclick='detailMyEndowment("+ data.endowment_id +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + data.endowment_name + "</span><span>"+ data.endowment_donation_amount +"</span></span></a></li>");
+      container.append("<li id='button-modal-my-endowment-"+ data.endowment_id +"'><a href='javascript:void(0)' onclick='detailMyEndowment("+ data.endowment_id +");' class='stat summary'><span class='icon icon-circle bg-green'><i class='icon-stats'></i></span><span class='digit'><span class='text'>" + data.endowment_name + "</span><span>"+ data.endowment_donation_amount +"</span></span></a></li>");
 
-      $('#my-endowment-details').append("<div id='dialog-modal-my-endowment-"+ data.endowment_id +"'><div id='my-endowment-data-"+ data.endowment_id +"'></div><hr/><div id='member_charities-"+ val.endowment_id +"'><br/></div><br /></div>");
+      $('#my-endowment-details').append("<div id='dialog-modal-my-endowment-"+ data.endowment_id +"'><div id='my-endowment-data-"+ data.endowment_id +"'></div></div>");
     });
   }
 }
@@ -783,8 +783,30 @@ function getDetailMyEndowment(id) {
 }
 
 function detailMyEndowment(id) {
-  $('#dialog-modal-my-endowment-'+ id).dialog();
   getDetailMyEndowment(id);
+
+  var demos = {
+    modalDialog: function( target, trigger ) {
+      target.dialog({
+        autoOpen: false,
+        modal: true
+      });
+
+      if (($('#payment-account-form').size() == 0)) {
+        showAllPaymentAccount();
+      }
+
+      trigger.on('click', function(e) {
+        target.dialog( 'open' );
+        e.preventDefault();
+      });
+    }
+  };
+
+  if( $.fn.dialog ) {
+    demos.modalDialog( $('#dialog-modal-my-endowment-' + id), $('#button-modal-my-endowment-' + id) );
+  }
+
 }
 
 function getFeaturedEndowments(container) {
