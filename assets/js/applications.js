@@ -1,11 +1,11 @@
-window.indexUrl = "http://localhost/giv2giv-jquery/";
+// window.indexUrl = "http://giv2giv.biscuitlabs.com/";
 // window.indexUrl = "http://www.giv2giv.org/giv2giv-jquery/";
 
 // window.serverUrl = "http://localhost:3000/";
 // window.stripePublishKey = "pk_test_ys65GDVxkAM0Ej8fwpDItB2s"
 
-window.serverUrl = "https://api.giv2giv.org/";
-window.stripePublishKey = "pk_test_d678rStKUyF2lNTZ3MfuOoHy"
+//window.serverUrl = "https://api.giv2giv.org/";
+//window.stripePublishKey = "pk_test_d678rStKUyF2lNTZ3MfuOoHy"
 
 $(document).ready(function() {
 });
@@ -490,9 +490,12 @@ function signOut(){
     type: "POST",
     success: function(response, xhr) {
       localStorage.clear();
+      // Clear Featured Endowments Container
+      $('#container-featured-endowments').html("");
       checkSession();
       getBalanceInformation();
-      getFeaturedEndowments($('#container-featured-endowments'));
+      // No need to do this (in checkSession();)
+      // getFeaturedEndowments($('#container-featured-endowments'));
       // redirect("index.html");
     },
     error: function (errorResponse) {
