@@ -1,11 +1,12 @@
 // window.indexUrl = "http://giv2giv.biscuitlabs.com/";
 // window.indexUrl = "http://www.giv2giv.org/giv2giv-jquery/";
+window.indexUrl = "http://localhost/giv2giv-jquery/";
 
-// window.serverUrl = "http://localhost:3000/";
+window.serverUrl = "http://localhost:3000/";
 // window.stripePublishKey = "pk_test_ys65GDVxkAM0Ej8fwpDItB2s"
 
 //window.serverUrl = "https://api.giv2giv.org/";
-//window.stripePublishKey = "pk_test_d678rStKUyF2lNTZ3MfuOoHy"
+window.stripePublishKey = "pk_test_d678rStKUyF2lNTZ3MfuOoHy"
 
 $(document).ready(function() {
 });
@@ -366,7 +367,7 @@ function endowmentDetails(){
 
   charities.fetch({
     headers: {'Authorization' :'Token token=' + token},
-    data: { id: endowment_id, charity_id: charity_id.toString() },
+    data: { id: endowment_id, charity_id: charity_id },
     type: "POST",
     success: function(response, xhr) {
       $('.form-actions').find('button:contains(Next)').click();
@@ -581,13 +582,13 @@ function createEndowment(){
     var name = $('#name').val();
     var minimum_donation_amount = $('#minimum_donation_amount').val();
     var val1 = $("#public").is(":checked");
-    var endowment_visibility = (val1 == true ? "public" : "private");
+    var visibility = (val1 == true ? "public" : "private");
     var description = $('#description').val();
 
     var data = {
       name: name,
       minimum_donation_amount: minimum_donation_amount,
-      endowment_visibility: endowment_visibility,
+      visibility: visibility,
       description: description
     };
 
@@ -709,7 +710,7 @@ function addCharityToGroup(endowment_id, charity_id, token) {
 
   charities.fetch({
     headers: {'Authorization' :'Token token=' + token},
-    data: { id: endowment_id, charity_id: charity_id.toString() },
+    data: { id: endowment_id, charity_id: charity_id },
     type: "POST",
     success: function(response,xhr) {
       console.log(response);
@@ -774,7 +775,7 @@ function getDetailMyEndowment(id) {
       var my_balance = window.my_detail_endowment[0].my_balances;
       var global_balance = window.my_detail_endowment[0].global_balances;
 
-      $('#my-endowment-data-' + id).html("<p style='text-align: right;'>Visibility: <b>"+ my_endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ my_endowment.name +"</b></p><p>Description: <b>"+ my_endowment.description +"</b></p><p>Current Balance: <b>0.0</b></p><p>Minimum Donation Amount: <b>"+ my_endowment.minimum_donation_amount +"</b></p><hr/><p>My Donations: <b>"+ my_balance.my_donations_amount +"</b></p><p>My Grants: <b>"+ my_balance.my_grants_amount +"</b></p><p>My Balance: <b>"+ my_balance.my_endowment_balance +"</b></p><br/><p>giv2giv Donations: <b>"+ global_balance.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ global_balance.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ global_balance.endowment_balance +"</b></p><div id='member-charities-my-endowment-"+ my_endowment.id +"'><br/></div>");
+      $('#my-endowment-data-' + id).html("<p style='text-align: right;'>Visibility: <b>"+ my_endowment.visibility +"</b></p><br /><p>Endowment Name: <b>"+ my_endowment.name +"</b></p><p>Description: <b>"+ my_endowment.description +"</b></p><p>Current Balance: <b>0.0</b></p><p>Minimum Donation Amount: <b>"+ my_endowment.minimum_donation_amount +"</b></p><hr/><p>My Donations: <b>"+ my_balance.my_donations_amount +"</b></p><p>My Grants: <b>"+ my_balance.my_grants_amount +"</b></p><p>My Balance: <b>"+ my_balance.my_endowment_balance +"</b></p><br/><p>giv2giv Donations: <b>"+ global_balance.endowment_donations +"</b></p><p>giv2giv Grants: <b>"+ global_balance.endowment_grants +"</b></p><p>giv2giv Balance: <b>"+ global_balance.endowment_balance +"</b></p><div id='member-charities-my-endowment-"+ my_endowment.id +"'><br/></div>");
       memberCharityEndowment(my_endowment.charities, my_endowment.id);
 
     },
@@ -843,7 +844,7 @@ function addToEndowmentList(source, container) {
       if (localStorage.endowment_details !== undefined) {
         var enDetails = JSON.parse(localStorage.endowment_details)[0];
         if (enDetails.my_balances !== undefined) {
-          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.endowment_visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>0.0</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
+          $('#endowment-details').append("<div id='dialog-modal-"+ val.endowment.id +"'><p style='text-align: right;'>Visibility: <b>"+ val.endowment.visibility +"</b></p><br /><p>Endowment Name: <b>"+ val.endowment.name +"</b></p><p>Description: <b>"+ val.endowment.description +"</b></p><p>Current Balance: <b>0.0</b></p><p>Minimum Donation Amount: <b>"+ val.endowment.minimum_donation_amount +"</b></p><br/><div id='donation-status-"+ val.endowment.id +"'></div><div id='giv2giv-data-"+ val.endowment.id +"'></div><hr/><div id='member_charities-"+ val.endowment.id +"'><br/></div></div>");
 
           memberCharityEndowment(val.endowment.charities, val.endowment.id);
 
